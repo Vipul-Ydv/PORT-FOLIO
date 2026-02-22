@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Rough Paper Background Circle (Optional, prevents transparent gaps) -->
+  <circle cx="50" cy="50" r="45" fill="#ffffff" stroke="none"/>
+  
+  <!-- Head Box (Shaky lines) -->
+  <path d="M25,35 Q35,33 50,34 Q65,33 75,35 Q77,55 76,75 Q65,77 50,76 Q35,77 24,75 Q23,55 25,35 Z" fill="#ffffff"/>
+  
+  <!-- Eyes (Doodle dots) -->
+  <circle cx="40" cy="50" r="4" fill="#2c3e50" stroke="none"/>
+  <circle cx="60" cy="50" r="4" fill="#2c3e50" stroke="none"/>
+  
+  <!-- Mouth (Happy squiggle) -->
+  <path d="M40,65 Q50,70 60,63" />
+  
+  <!-- Antenna -->
+  <path d="M50,34 L52,20" />
+  <circle cx="52" cy="15" r="6" fill="white" />
+  
+  <!-- Sparkles/Radio Waves -->
+  <path d="M60,15 L65,10 M44,15 L39,10" stroke-width="2"/>
+</svg>
