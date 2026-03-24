@@ -4,96 +4,139 @@
    ========================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all modules
     initNavigation();
     initScrollReveal();
     initSmoothScroll();
     initNavbarScroll();
     initTabs();
-    // initGithubGraph(); // Removed feature
+    initGithubStats();
     initContactFlyer();
     animateCounters();
 });
 /* ==========================================
-   GITHUB ACTIVITY GRAPH
+   GITHUB ACTIVITY - LIVE STATS
    ========================================== */
-async function initGithubGraph() {
+async function initGithubStats() {
+    const USERNAME = 'Vipul-Ydv';
     const grid = document.getElementById('github-grid');
     if (!grid) return;
 
-    // CONFIGURATION: Enter your GitHub Username here
-    const USERNAME = 'VIPUL-YDV'; // Default placeholder, replace with yours if different
+    // Fetch all data in parallel
+    const [profileData, contribData, reposData] = await Promise.allSettled([
+        fetch(`https://api.github.com/users/${USERNAME}`).then(r => r.ok ? r.json() : Promise.reject()),
+        fetch(`https://github-contributions-api.jogruber.de/v4/${USERNAME}?y=last`).then(r => r.ok ? r.json() : Promise.reject()),
+        fetch(`https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`).then(r => r.ok ? r.json() : Promise.reject())
+    ]);
 
-    // Fallback generator (Sketchy random data)
-    const generateRandomData = () => {
-        grid.innerHTML = '';
-        const totalDays = 52 * 7;
-        for (let i = 0; i < totalDays; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'graph-cell';
-            const rand = Math.random();
-            let level = 0;
-            if (rand > 0.9) level = 4;
-            else if (rand > 0.75) level = 3;
-            else if (rand > 0.5) level = 2;
-            else if (rand > 0.25) level = 1;
+    // --- 1. Profile Card ---
+    if (profileData.status === 'fulfilled') {
+        const p = profileData.value;
+        const avatar = document.getElementById('gh-avatar');
+        const name = document.getElementById('gh-name');
+        const bio = document.getElementById('gh-bio');
+        const link = document.getElementById('gh-link');
+        if (avatar) avatar.src = p.avatar_url;
+        if (name) name.textContent = p.name || p.login;
+        if (bio) bio.textContent = p.bio || 'Full-Stack Developer';
+        if (link) link.href = p.html_url;
 
-            if (level > 0) {
-                cell.classList.add(`level-${level}`);
-                cell.title = `Activity level: ${level}`;
-            }
-            grid.appendChild(cell);
+        // Stats
+        const repos = document.getElementById('gh-repos');
+        const followers = document.getElementById('gh-followers');
+        const following = document.getElementById('gh-following');
+        if (repos) { repos.textContent = p.public_repos; repos.setAttribute('data-count', p.public_repos); }
+        if (followers) { followers.textContent = p.followers; followers.setAttribute('data-count', p.followers); }
+        if (following) { following.textContent = p.following; following.setAttribute('data-count', p.following); }
+    }
+
+    // --- 2. Contribution Graph ---
+    if (contribData.status === 'fulfilled') {
+        const data = contribData.value;
+        const contributions = data.contributions || [];
+        const totalContribs = data.total?.lastYear || contributions.reduce((s, d) => s + d.count, 0);
+
+        // Update contribution counter
+        const contribEl = document.getElementById('gh-contributions');
+        if (contribEl) {
+            contribEl.textContent = totalContribs;
+            contribEl.setAttribute('data-count', totalContribs);
         }
-    };
 
-    try {
-        console.log(`Fetching GitHub data for ${USERNAME}...`);
+        // Render months row
+        const monthsRow = document.getElementById('graph-months');
+        if (monthsRow && contributions.length > 0) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const startDate = new Date(contributions[0].date);
+            let lastMonth = -1;
+            const monthLabels = [];
+            contributions.forEach((day, i) => {
+                const d = new Date(day.date);
+                if (d.getMonth() !== lastMonth) {
+                    lastMonth = d.getMonth();
+                    monthLabels.push(months[lastMonth]);
+                }
+            });
+            // Show ~12 evenly spaced month labels
+            const uniqueMonths = [...new Set(monthLabels)];
+            monthsRow.innerHTML = uniqueMonths.map(m => `<span>${m}</span>`).join('');
+        }
 
-        // Use local JSON file to avoid CORS/Network issues
-        // To update this data, fetch: https://github-contributions-api.jogruber.de/v4/VIPUL-YDV?y=last
-        // and save it to js/github-data.json
-        const response = await fetch('js/github-data.json');
-
-        if (!response.ok) throw new Error('Failed to fetch local data');
-
-        const data = await response.json();
-
-        if (!data.contributions || data.contributions.length === 0) throw new Error('No data');
-
+        // Render grid (last 52 weeks)
         grid.innerHTML = '';
-
-        // We need the last 52 weeks (approx 364 days)
-        const contributions = data.contributions;
         const startIndex = Math.max(0, contributions.length - (52 * 7));
         const displayData = contributions.slice(startIndex);
-
         displayData.forEach(day => {
             const cell = document.createElement('div');
             cell.className = 'graph-cell';
-
-            // Map count/level to our CSS classes
-            // The API returns level 0-4 matching GitHub's colors
-            if (day.level > 0) {
-                cell.classList.add(`level-${day.level}`);
-            }
-
+            if (day.level > 0) cell.classList.add(`level-${day.level}`);
             cell.title = `${day.count} contributions on ${day.date}`;
             grid.appendChild(cell);
         });
-
-        // Calculate total contributions manually from the array
-        const totalContributions = displayData.reduce((sum, day) => sum + day.count, 0);
-
-        // Update stats
-        const totalStat = document.getElementById('contrib-count');
-        if (totalStat) {
-            totalStat.setAttribute('data-count', totalContributions);
-            totalStat.textContent = totalContributions;
+    } else {
+        // Fallback: random data
+        grid.innerHTML = '';
+        for (let i = 0; i < 52 * 7; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'graph-cell';
+            const rand = Math.random();
+            if (rand > 0.9) cell.classList.add('level-4');
+            else if (rand > 0.75) cell.classList.add('level-3');
+            else if (rand > 0.5) cell.classList.add('level-2');
+            else if (rand > 0.25) cell.classList.add('level-1');
+            grid.appendChild(cell);
         }
+    }
 
-    } catch (error) {
-        console.warn('GitHub Graph Error (using fallback):', error);
-        generateRandomData();
+    // --- 3. Top Repos ---
+    const reposContainer = document.getElementById('github-repos');
+    if (reposData.status === 'fulfilled' && reposContainer) {
+        const repos = reposData.value
+            .filter(r => !r.fork)
+            .slice(0, 4);
+
+        // Language colors
+        const langColors = {
+            'JavaScript': '#f1e05a', 'Python': '#3572A5', 'HTML': '#e34c26',
+            'CSS': '#563d7c', 'TypeScript': '#3178c6', 'Java': '#b07219',
+            'C++': '#f34b7d', 'C': '#555555', 'Shell': '#89e051'
+        };
+
+        reposContainer.innerHTML = repos.map(r => `
+            <a href="${r.html_url}" target="_blank" class="github-repo-card">
+                <div class="repo-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span class="repo-name">${r.name}</span>
+                </div>
+                <p class="repo-desc">${r.description || 'No description'}</p>
+                <div class="repo-meta">
+                    ${r.language ? `<span class="repo-lang"><span class="lang-dot" style="background:${langColors[r.language] || '#888'}"></span>${r.language}</span>` : ''}
+                    <span class="repo-stat">⭐ ${r.stargazers_count}</span>
+                    <span class="repo-stat">🍴 ${r.forks_count}</span>
+                </div>
+            </a>
+        `).join('');
     }
 }
 
