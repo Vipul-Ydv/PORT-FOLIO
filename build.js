@@ -18,7 +18,7 @@ const DIST = './public';
 const ROOT = '.';
 
 // Files/folders to copy as-is (images, PDFs, etc.)
-const COPY_AS_IS = ['img', 'api', 'Resume_vipul_final (1).pdf', 'IMG_20260125_124427.jpg'];
+const COPY_AS_IS = ['img', 'api', 'vipul_res.pdf', 'IMG_20260125_124427.jpg'];
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
