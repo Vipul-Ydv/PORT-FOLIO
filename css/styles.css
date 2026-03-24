@@ -2613,8 +2613,69 @@ h6 {
     z-index: 1000;
 }
 
-.flyer-message.show {
+.jarvis-messages.show {
     opacity: 1;
+}
+
+/* Quick Actions */
+.jarvis-quick-actions {
+    display: flex;
+    gap: 10px;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.5);
+    border-top: 1px dashed var(--color-text-light);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    background: white;
+    border: 2px solid var(--color-text-primary);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.quick-action-btn:hover {
+    transform: translateY(-2px) rotate(-1deg);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+    background: var(--color-accent-glow);
+    color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+}
+
+.quick-action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Direct Contact Button in Flyer */
+.btn-direct-contact {
+    margin-top: 2rem;
+    background: var(--color-accent-primary);
+    color: white !important;
+    border-color: var(--color-text-primary);
+    box-shadow: 4px 4px 0 var(--color-text-primary);
+    font-size: 1.4rem;
+    padding: 1rem 2.5rem;
+    transform: rotate(-1deg);
+}
+
+.btn-direct-contact:hover {
+    transform: scale(1.05) rotate(1deg);
+    box-shadow: 6px 6px 0 var(--color-text-primary);
+    background: var(--color-accent-primary);
+    filter: brightness(1.1);
 }
 
 /* Mobile adjustments */

@@ -70,6 +70,49 @@ PERSONALITY GUIDELINES:
             role: 'system',
             content: this.SYSTEM_PROMPT
         });
+        this.renderQuickActions();
+    },
+
+    // Render Quick Actions
+    renderQuickActions() {
+        const container = document.getElementById('jarvis-window');
+        let actionsRow = document.querySelector('.jarvis-quick-actions');
+        
+        if (!actionsRow) {
+            actionsRow = document.createElement('div');
+            actionsRow.className = 'jarvis-quick-actions';
+            // Insert before input container
+            const inputContainer = document.querySelector('.jarvis-input-container');
+            container.insertBefore(actionsRow, inputContainer);
+        }
+
+        actionsRow.innerHTML = `
+            <button class="quick-action-btn" id="qa-send-msg">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <span>Send Message</span>
+            </button>
+            <button class="quick-action-btn" id="qa-resume">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span>View Resume</span>
+            </button>
+        `;
+
+        // Bind events
+        document.getElementById('qa-send-msg')?.addEventListener('click', () => {
+            this.startEmailFlow();
+        });
+        document.getElementById('qa-resume')?.addEventListener('click', () => {
+            window.open('vipul_res.pdf', '_blank');
+        });
     },
 
     // Bind event listeners

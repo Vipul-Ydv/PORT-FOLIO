@@ -435,6 +435,29 @@ function initContactFlyer() {
         });
     });
 
+    // 3. Handle Contact Buttons (Hero & Flyer) via AI
+    const contactTriggerBtns = ['hero-contact-btn', 'direct-contact-btn'];
+    contactTriggerBtns.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                // If it's the hero button, let the smooth scroll happen but ALSO trigger AI
+                // If it's the direct button, prevent default to avoid jitter
+                if (id === 'direct-contact-btn') e.preventDefault();
+
+                if (typeof HIREN !== 'undefined') {
+                    const jarvisWindow = document.getElementById('jarvis-window');
+                    if (jarvisWindow && !jarvisWindow.classList.contains('active')) {
+                        HIREN.toggleChat();
+                    }
+                    setTimeout(() => {
+                        HIREN.startEmailFlow();
+                    }, 300);
+                }
+            });
+        }
+    });
+
     function showFlyerMessage(text) {
         messageEl.textContent = text;
         messageEl.classList.add('show');
