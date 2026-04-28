@@ -70,7 +70,37 @@ PERSONALITY GUIDELINES:
             role: 'system',
             content: this.SYSTEM_PROMPT
         });
+        this.renderSuggestedQuestions();
         this.renderQuickActions();
+    },
+
+    // Render Suggested Questions
+    renderSuggestedQuestions() {
+        const container = document.getElementById('jarvis-messages');
+        if (!container) return;
+
+        const suggestions = [
+            "What are Vipul's top projects?",
+            "Is Vipul available for hire?",
+            "What tech stack does Vipul use?",
+            "Tell me about COPREPER"
+        ];
+
+        const wrap = document.createElement('div');
+        wrap.className = 'jarvis-suggestions';
+        wrap.innerHTML = suggestions.map(q =>
+            `<button class="suggestion-chip">${q}</button>`
+        ).join('');
+
+        container.appendChild(wrap);
+
+        wrap.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const question = chip.textContent;
+                wrap.remove();
+                this.processUserMessage(question);
+            });
+        });
     },
 
     // Render Quick Actions
@@ -156,43 +186,6 @@ PERSONALITY GUIDELINES:
         // Update icon if wanted, logic:
         // const window = document.getElementById('jarvis-maximize').querySelector('svg');
         // If fullscreen, show 'compress' icon, else 'expand'.
-    },
-
-    // Send message
-    async sendMessage() {
-        const input = document.getElementById('jarvis-input');
-        const message = input?.value.trim();
-
-        if (!message) return;
-
-        // Add user message to UI
-        this.addMessage(message, 'user');
-        input.value = '';
-
-        // Add to chat history
-        this.chatHistory.push({
-            role: 'user',
-            content: message
-        });
-
-        // Show typing indicator
-        this.showTyping();
-
-        try {
-            const response = await this.callGroqAPI();
-            this.hideTyping();
-            this.addMessage(response, 'bot');
-
-            // Add to chat history
-            this.chatHistory.push({
-                role: 'assistant',
-                content: response
-            });
-        } catch (error) {
-            this.hideTyping();
-            this.addMessage('I apologize, but I seem to be experiencing technical difficulties. Perhaps try again in a moment, sir.', 'bot');
-            console.error('HIREN Error:', error);
-        }
     },
 
     // State for Email Form
