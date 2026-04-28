@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found | Vipul Yadav</title>
+    <link rel="icon" type="image/svg+xml" href="img/hiren-sketch.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #fdfcf0;
+            --color-line: #aaddff;
+            --color-margin: #ffcccc;
+            --color-text: #2c3e50;
+            --color-accent: #e74c3c;
+            --color-blue: #3498db;
+            --font-heading: 'Indie Flower', cursive;
+            --font-body: 'Patrick Hand', cursive;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            background-image:
+                linear-gradient(90deg, transparent 79px, var(--color-margin) 79px, var(--color-margin) 81px, transparent 81px),
+                linear-gradient(var(--color-line) 1px, transparent 1px);
+            background-size: 100% 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text);
+        }
+
+        .page {
+            text-align: center;
+            padding: 2rem;
+            max-width: 560px;
+        }
+
+        .error-number {
+            font-family: var(--font-heading);
+            font-size: clamp(6rem, 20vw, 10rem);
+            line-height: 1;
+            color: var(--color-accent);
+            text-shadow: 4px 4px 0 rgba(0,0,0,0.08);
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-number::after {
+            content: '404';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            color: rgba(52, 152, 219, 0.25);
+            z-index: -1;
+        }
+
+        .scratch {
+            display: block;
+            width: 80%;
+            height: 3px;
+            background: var(--color-accent);
+            margin: -0.5rem auto 1.5rem;
+            transform: rotate(-1deg) skewX(-5deg);
+            opacity: 0.5;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #556677;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .doodle-arrow {
+            display: block;
+            margin: 0 auto 1.5rem;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            color: #8899aa;
+            transform: rotate(2deg);
+        }
+
+        .home-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: none;
+            border: 3px solid var(--color-text);
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--color-text);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .home-btn:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: white;
+            transform: translateY(-3px) rotate(-1deg);
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+        }
+
+        .note {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #aab;
+            font-family: var(--font-heading);
+            transform: rotate(-1deg);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <span class="error-number">404</span>
+        <span class="scratch"></span>
+        <h1>Oops! Page not found.</h1>
+        <p>Looks like this page got lost between the notebook pages.<br>It might have been moved, deleted, or never existed.</p>
+        <span class="doodle-arrow">↓ head back home ↓</span>
+        <a href="/" class="home-btn">← Go Home</a>
+        <span class="note">— HIREN tried to find it too, no luck.</span>
+    </div>
+</body>
+</html>
