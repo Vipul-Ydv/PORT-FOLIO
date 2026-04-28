@@ -4,15 +4,111 @@
    ========================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initNavigation();
     initScrollReveal();
     initSmoothScroll();
     initNavbarScroll();
+    initScrollProgress();
+    initBackToTop();
     initTabs();
     initGithubStats();
+    initLeetCodeStats();
     initContactFlyer();
-    animateCounters();
+    initProjectFilter();
 });
+
+/* ==========================================
+   DARK MODE
+   ========================================== */
+function initTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', saved);
+
+    const btn = document.getElementById('theme-toggle');
+    btn?.addEventListener('click', () => {
+        const current = document.body.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    });
+}
+/* ==========================================
+   SCROLL PROGRESS BAR
+   ========================================== */
+function initScrollProgress() {
+    const bar = document.getElementById('scroll-progress');
+    if (!bar) return;
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = docHeight > 0 ? `${(scrollTop / docHeight) * 100}%` : '0%';
+    }, { passive: true });
+}
+
+/* ==========================================
+   BACK TO TOP
+   ========================================== */
+function initBackToTop() {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+/* ==========================================
+   PROJECT FILTER
+   ========================================== */
+function initProjectFilter() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.project-card[data-category]');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.getAttribute('data-filter');
+            cards.forEach(card => {
+                const match = filter === 'all' || card.getAttribute('data-category') === filter;
+                card.classList.toggle('hidden', !match);
+            });
+        });
+    });
+}
+
+/* ==========================================
+   LEETCODE STATS
+   ========================================== */
+async function initLeetCodeStats() {
+    const USERNAME = 'vipul_ydv';
+    try {
+        const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${USERNAME}`);
+        if (!res.ok) throw new Error('fetch failed');
+        const data = await res.json();
+
+        const set = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val !== undefined) el.textContent = val;
+        };
+        set('lc-total', data.totalSolved);
+        set('lc-easy', data.easySolved);
+        set('lc-medium', data.mediumSolved);
+        set('lc-hard', data.hardSolved);
+    } catch {
+        ['lc-total','lc-easy','lc-medium','lc-hard'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = 'N/A';
+        });
+    }
+}
+
 /* ==========================================
    GITHUB ACTIVITY - LIVE STATS
    ========================================== */
@@ -47,6 +143,7 @@ async function initGithubStats() {
         if (repos) { repos.textContent = p.public_repos; repos.setAttribute('data-count', p.public_repos); }
         if (followers) { followers.textContent = p.followers; followers.setAttribute('data-count', p.followers); }
         if (following) { following.textContent = p.following; following.setAttribute('data-count', p.following); }
+        animateCounters();
     }
 
     // --- 2. Contribution Graph ---
@@ -60,6 +157,7 @@ async function initGithubStats() {
         if (contribEl) {
             contribEl.textContent = totalContribs;
             contribEl.setAttribute('data-count', totalContribs);
+            animateCounters();
         }
 
         // Render months row
