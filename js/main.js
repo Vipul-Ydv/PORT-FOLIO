@@ -87,7 +87,7 @@ function initProjectFilter() {
    LEETCODE STATS
    ========================================== */
 async function initLeetCodeStats() {
-    const USERNAME = 'vipul_ydv';
+    const USERNAME = 'Vipul-Ydv';
     try {
         const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${USERNAME}`);
         if (!res.ok) throw new Error('fetch failed');
