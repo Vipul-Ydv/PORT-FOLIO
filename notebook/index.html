@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vipul Yadav — notebook</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f5efd9;
+    --ink: #1a1f2e;
+    --red: #c83030;
+    --blue: #2a4a8a;
+    --pencil: #5a6070;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Patrick Hand", "Caveat", sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    /* Graph-paper grid */
+    background-image:
+      linear-gradient(to right, rgba(60, 80, 130, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(60, 80, 130, 0.08) 1px, transparent 1px),
+      linear-gradient(to right, rgba(60, 80, 130, 0.16) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(60, 80, 130, 0.16) 1px, transparent 1px);
+    background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    background-attachment: fixed;
+  }
+  /* Subtle noisy paper grain on top */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: radial-gradient(rgba(120, 90, 40, 0.04) 1px, transparent 1.5px);
+    background-size: 3px 3px;
+  }
+
+  /* Top bar */
+  .nb-topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(245, 239, 217, 0.92);
+    backdrop-filter: blur(4px);
+    border-bottom: 1.5px dashed rgba(26, 31, 46, 0.25);
+    padding: 14px 0;
+  }
+  .nb-topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 0 28px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .nb-topbar-inner > nav { flex: 1; justify-content: center; }
+  .nb-tab {
+    background: transparent; border: none; cursor: pointer;
+    font-family: "Patrick Hand", cursive; font-size: 19px;
+    color: var(--pencil); padding: 4px 6px;
+    position: relative; transition: color .15s;
+  }
+  .nb-tab:hover { color: var(--ink); }
+  .nb-tab.is-active { color: var(--red); }
+  .nb-tab.is-active::after {
+    content: ''; position: absolute; left: 4px; right: 4px; bottom: -2px;
+    height: 4px; background: #fff48a; z-index: -1;
+  }
+
+  /* Main — wider for two-page spreads */
+  .nb-main {
+    max-width: 1300px; margin: 0 auto;
+    padding: 36px 24px 80px;
+    display: flex; flex-direction: column; gap: 80px;
+    position: relative; z-index: 1;
+  }
+  .nb-spread { scroll-margin-top: 80px; }
+
+  /* Pages — paper cards. Constrained to feel like real pages. */
+  .nb-page { scroll-margin-top: 80px; }
+
+  /* Buttons */
+  .nb-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: var(--ink);
+    border: 2px solid var(--ink);
+    font-family: "Caveat", cursive; font-size: 22px;
+    padding: 6px 16px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform .1s, box-shadow .1s;
+    text-decoration: none;
+  }
+  .nb-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  .nb-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
+  .nb-btn-primary {
+    background: var(--red); color: #fff; border-color: var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .nb-btn-small { font-size: 18px; padding: 4px 12px; box-shadow: 2px 2px 0 var(--ink); }
+
+  /* FAB sticky note */
+  .nb-fab {
+    position: fixed; right: 24px; bottom: 24px; z-index: 90;
+    width: 90px; height: 90px;
+    background: #fff48a;
+    border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transform: rotate(-6deg);
+    box-shadow: 3px 4px 0 rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.1);
+    transition: transform .15s;
+  }
+  .nb-fab:hover { transform: rotate(-3deg) scale(1.05); }
+  .nb-fab::before {
+    content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-4deg);
+    width: 50px; height: 14px; background: rgba(244, 195, 60, 0.7);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* Animations */
+  @keyframes nb-fade { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes nb-drop {
+    from { opacity: 0; transform: rotate(-3deg) translateY(-30px) scale(0.95); }
+    to   { opacity: 1; transform: rotate(-1deg) translateY(0) scale(1); }
+  }
+  .nb-dots::after {
+    content: '';
+    animation: nb-blink 1.2s steps(3) infinite;
+  }
+  @keyframes nb-blink { 0% { content: '' } 33% { content: '.' } 66% { content: '..' } 100% { content: '...' } }
+
+  ::-webkit-scrollbar { width: 12px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--pencil); border: 3px solid var(--paper); border-radius: 6px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js"></script>
+<script type="text/babel" src="scribbles.jsx"></script>
+<script type="text/babel" src="pages-1.jsx"></script>
+<script type="text/babel" src="pages-2.jsx"></script>
+<script type="text/babel" src="pages-3.jsx"></script>
+<script type="text/babel" src="hiren.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
