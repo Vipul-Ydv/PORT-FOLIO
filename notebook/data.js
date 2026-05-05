@@ -55,7 +55,8 @@ window.ndata = {
         "Session replay with timestamped feedback overlay",
       ],
       metric: "50+ sessions · 1.4s latency",
-      link: "copreper.vercel.app",
+      live: "https://copreper.vercel.app",
+      repo: "https://github.com/Vipul-Ydv/copreper",
     },
     {
       slug: "nishaan", title: "Nishaan",
@@ -68,6 +69,7 @@ window.ndata = {
         "Audit trail visible to courts, immutable",
       ],
       metric: "-38% gas · 200+ txs",
+      repo: "https://github.com/Vipul-Ydv/nishaan",
     },
     {
       slug: "bert-emotion", title: "BERT Emotion",
@@ -80,6 +82,7 @@ window.ndata = {
         "SHAP attributions per token for debugging",
       ],
       metric: "F1 0.89 · 80ms p50",
+      repo: "https://github.com/Vipul-Ydv/bert-emotion",
     },
     {
       slug: "tfidf-resume", title: "Resume Matcher",
@@ -92,6 +95,7 @@ window.ndata = {
         "Drop-in CLI for ATS pipelines",
       ],
       metric: "90%+ acc · $0 cost",
+      repo: "https://github.com/Vipul-Ydv/resume-matcher",
     },
   ],
 

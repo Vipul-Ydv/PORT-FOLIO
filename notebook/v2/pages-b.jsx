@@ -73,6 +73,14 @@ const ProblemSpread = () => (
         what actually happened.
       </h3>
       <Underline w={300} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
+      <div style={{ marginTop: 14, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <a href="https://copreper.vercel.app" target="_blank" rel="noopener" className="nb-chip nb-chip-red">
+          ↗ visit live
+        </a>
+        <a href="https://github.com/Vipul-Ydv/copreper" target="_blank" rel="noopener" className="nb-chip">
+          ⌥ view code
+        </a>
+      </div>
 
       {/* Screenshot taped */}
       <div style={{

@@ -44,6 +44,20 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{ marginTop: 8, fontFamily: '"Caveat", cursive', fontSize: 16, color: COL.red }}>
                   {p.metric}
                 </div>
+                {(p.live || p.repo) && (
+                  <div style={{ marginTop: 10, display: 'flex', gap: 6, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
+                    {p.live && (
+                      <a href={p.live} target="_blank" rel="noopener" className="nb-chip nb-chip-red">
+                        ↗ live
+                      </a>
+                    )}
+                    {p.repo && (
+                      <a href={p.repo} target="_blank" rel="noopener" className="nb-chip">
+                        ⌥ code
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -73,9 +87,19 @@ const ProofSpread = ({ focus, setFocus }) => {
                   ))}
                 </div>
               </div>
-              <span style={{ fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.red, alignSelf: 'center' }}>
-                {p.metric}
-              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                <span style={{ fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.red, lineHeight: 1 }}>
+                  {p.metric}
+                </span>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  {p.live && (
+                    <a href={p.live} target="_blank" rel="noopener" className="nb-chip nb-chip-red nb-chip-tiny">↗ live</a>
+                  )}
+                  {p.repo && (
+                    <a href={p.repo} target="_blank" rel="noopener" className="nb-chip nb-chip-tiny">⌥ code</a>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </div>
