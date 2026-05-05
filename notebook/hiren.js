@@ -8,7 +8,7 @@ ABOUT VIPUL YADAV:
 - Role: Full-Stack Web Developer specializing in the MERN stack (MongoDB, Express, React, Node.js). Also experienced in AI/ML and NLP.
 - Education: B.Tech in Computer Science (2023-2027) at BTKIT, Dwarahat
 - Location: Haridwar, India
-- Email: vipul.yadav@coloredcow.in
+- Email: vipul.ydv01@gmail.com
 
 PROFESSIONAL EXPERIENCE:
 1. Software Engineer Intern at ColoredCow (Nov 2025 – Present)

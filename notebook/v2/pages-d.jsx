@@ -20,7 +20,7 @@ const WhatNextSpread = ({ onHiren }) => (
       </p>
 
       <div style={{ marginTop: 18, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-        <a href="mailto:vipul.yadav@coloredcow.in" className="nb-btn nb-btn-primary" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
+        <a href="mailto:vipul.ydv01@gmail.com" className="nb-btn nb-btn-primary" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
           send email <ArrowWavy w={28} color="#fff" />
         </a>
         <button onClick={onHiren} className="nb-btn" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>

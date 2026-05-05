@@ -122,10 +122,11 @@ window.ndata = {
   ],
 
   contact: [
-    { k: "email",    v: "vipul.yadav@coloredcow.in",         primary: true,  href: "mailto:vipul.yadav@coloredcow.in" },
+    { k: "email",    v: "vipul.ydv01@gmail.com",               primary: true,  href: "mailto:vipul.ydv01@gmail.com" },
     { k: "github",   v: "github.com/Vipul-Ydv",               href: "https://github.com/Vipul-Ydv" },
     { k: "linkedin", v: "in/vipul-ydv",                        href: "https://linkedin.com/in/vipul-ydv" },
     { k: "x",        v: "@vipulbuilds",                         href: "https://x.com/vipulbuilds" },
+    { k: "instagram", v: "@vipul.01_",                          href: "https://instagram.com/vipul.01_" },
     { k: "site",     v: "vipulydv.me",                          href: "https://vipulydv.me" },
   ],
 
