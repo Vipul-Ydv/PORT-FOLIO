@@ -48,7 +48,7 @@ window.ndata = {
       slug: "copreper", title: "COPREPER",
       caption: "AI mock-interview platform. 50+ real sessions.",
       stack: ["react", "node", "openai", "whisper"],
-      angle: -3, polaroid: '#fff8e6', img: 'assets/copreper.png',
+      angle: -3, polaroid: '#fff8e6', img: 'notebook/assets/copreper.png',
       bullets: [
         "Real-time Whisper transcript + GPT-4 evaluator chain",
         "Custom rubric scoring across 5 dimensions",
@@ -61,7 +61,7 @@ window.ndata = {
       slug: "nishaan", title: "Nishaan",
       caption: "Decentralized digital evidence vault. Tamper-proof.",
       stack: ["solidity", "ipfs", "next.js"],
-      angle: 2.5, polaroid: '#eef4ff', img: 'assets/nishaan.png',
+      angle: 2.5, polaroid: '#eef4ff', img: 'notebook/assets/nishaan.png',
       bullets: [
         "ZK access proofs for evidence chain",
         "ERC-721 evidence tokens with full provenance",
@@ -73,7 +73,7 @@ window.ndata = {
       slug: "bert-emotion", title: "BERT Emotion",
       caption: "Fine-tuned BERT, 7-class sentiment, F1 0.89.",
       stack: ["pytorch", "huggingface", "fastapi"],
-      angle: -1.5, polaroid: '#fff0f0', img: 'assets/bert-emotion.png',
+      angle: -1.5, polaroid: '#fff0f0', img: 'notebook/assets/bert-emotion.png',
       bullets: [
         "12k labeled reviews + active learning loop",
         "FastAPI inference, 80ms p50",

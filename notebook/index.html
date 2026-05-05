@@ -4,149 +4,203 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Vipul Yadav — notebook</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
-
 <style>
-  :root {
-    --paper: #f5efd9;
-    --ink: #1a1f2e;
-    --red: #c83030;
-    --blue: #2a4a8a;
-    --pencil: #5a6070;
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    font-family: "Patrick Hand", "Caveat", sans-serif;
-    color: var(--ink);
-    background: var(--paper);
-    /* Graph-paper grid */
-    background-image:
-      linear-gradient(to right, rgba(60, 80, 130, 0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(60, 80, 130, 0.08) 1px, transparent 1px),
-      linear-gradient(to right, rgba(60, 80, 130, 0.16) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(60, 80, 130, 0.16) 1px, transparent 1px);
-    background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
-    background-position: 0 0, 0 0, 0 0, 0 0;
-    background-attachment: fixed;
-  }
-  /* Subtle noisy paper grain on top */
-  body::before {
-    content: '';
-    position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background-image: radial-gradient(rgba(120, 90, 40, 0.04) 1px, transparent 1.5px);
-    background-size: 3px 3px;
-  }
-
-  /* Top bar */
-  .nb-topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(245, 239, 217, 0.92);
-    backdrop-filter: blur(4px);
-    border-bottom: 1.5px dashed rgba(26, 31, 46, 0.25);
-    padding: 14px 0;
-  }
-  .nb-topbar-inner {
-    max-width: 1180px; margin: 0 auto; padding: 0 28px;
-    display: flex; align-items: center; gap: 28px;
-  }
-  .nb-topbar-inner > nav { flex: 1; justify-content: center; }
-  .nb-tab {
-    background: transparent; border: none; cursor: pointer;
-    font-family: "Patrick Hand", cursive; font-size: 19px;
-    color: var(--pencil); padding: 4px 6px;
-    position: relative; transition: color .15s;
-  }
-  .nb-tab:hover { color: var(--ink); }
-  .nb-tab.is-active { color: var(--red); }
-  .nb-tab.is-active::after {
-    content: ''; position: absolute; left: 4px; right: 4px; bottom: -2px;
-    height: 4px; background: #fff48a; z-index: -1;
-  }
-
-  /* Main — wider for two-page spreads */
-  .nb-main {
-    max-width: 1300px; margin: 0 auto;
-    padding: 36px 24px 80px;
-    display: flex; flex-direction: column; gap: 80px;
-    position: relative; z-index: 1;
-  }
-  .nb-spread { scroll-margin-top: 80px; }
-
-  /* Pages — paper cards. Constrained to feel like real pages. */
-  .nb-page { scroll-margin-top: 80px; }
-
-  /* Buttons */
-  .nb-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #fff; color: var(--ink);
-    border: 2px solid var(--ink);
-    font-family: "Caveat", cursive; font-size: 22px;
-    padding: 6px 16px;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--ink);
-    transition: transform .1s, box-shadow .1s;
-    text-decoration: none;
-  }
-  .nb-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
-  .nb-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
-  .nb-btn-primary {
-    background: var(--red); color: #fff; border-color: var(--ink);
-    box-shadow: 3px 3px 0 var(--ink);
-  }
-  .nb-btn-small { font-size: 18px; padding: 4px 12px; box-shadow: 2px 2px 0 var(--ink); }
-
-  /* FAB sticky note */
-  .nb-fab {
-    position: fixed; right: 24px; bottom: 24px; z-index: 90;
-    width: 90px; height: 90px;
-    background: #fff48a;
-    border: none; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transform: rotate(-6deg);
-    box-shadow: 3px 4px 0 rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.1);
-    transition: transform .15s;
-  }
-  .nb-fab:hover { transform: rotate(-3deg) scale(1.05); }
-  .nb-fab::before {
-    content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-4deg);
-    width: 50px; height: 14px; background: rgba(244, 195, 60, 0.7);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-  }
-
-  /* Animations */
-  @keyframes nb-fade { from { opacity: 0 } to { opacity: 1 } }
-  @keyframes nb-drop {
-    from { opacity: 0; transform: rotate(-3deg) translateY(-30px) scale(0.95); }
-    to   { opacity: 1; transform: rotate(-1deg) translateY(0) scale(1); }
-  }
-  .nb-dots::after {
-    content: '';
-    animation: nb-blink 1.2s steps(3) infinite;
-  }
-  @keyframes nb-blink { 0% { content: '' } 33% { content: '.' } 66% { content: '..' } 100% { content: '...' } }
-
-  ::-webkit-scrollbar { width: 12px; }
-  ::-webkit-scrollbar-track { background: var(--paper); }
-  ::-webkit-scrollbar-thumb { background: var(--pencil); border: 3px solid var(--paper); border-radius: 6px; }
+  :root { --paper:#f5efd9; --ink:#1a1f2e; --red:#c83030; --blue:#2a4a8a; --pencil:#5a6070; }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:"Patrick Hand","Caveat",sans-serif;color:var(--ink);background:var(--paper);
+    background-image:linear-gradient(to right,rgba(60,80,130,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(60,80,130,.08) 1px,transparent 1px),linear-gradient(to right,rgba(60,80,130,.16) 1px,transparent 1px),linear-gradient(to bottom,rgba(60,80,130,.16) 1px,transparent 1px);
+    background-size:24px 24px,24px 24px,120px 120px,120px 120px;background-attachment:fixed}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(rgba(120,90,40,.04) 1px,transparent 1.5px);background-size:3px 3px}
+  .nb-topbar{position:sticky;top:0;z-index:100;background:rgba(245,239,217,.92);backdrop-filter:blur(4px);border-bottom:1.5px dashed rgba(26,31,46,.25);padding:14px 0}
+  .nb-topbar-inner{max-width:1180px;margin:0 auto;padding:0 28px;display:flex;align-items:center;gap:28px}
+  .nb-topbar-inner>nav{flex:1;justify-content:center}
+  .nb-tab{background:transparent;border:none;cursor:pointer;font-family:"Patrick Hand",cursive;font-size:19px;color:var(--pencil);padding:4px 6px;position:relative;transition:color .15s}
+  .nb-tab:hover{color:var(--ink)}
+  .nb-tab.is-active{color:var(--red)}
+  .nb-tab.is-active::after{content:'';position:absolute;left:4px;right:4px;bottom:-2px;height:4px;background:#fff48a;z-index:-1}
+  .nb-main{max-width:1300px;margin:0 auto;padding:36px 24px 80px;display:flex;flex-direction:column;gap:80px;position:relative;z-index:1}
+  .nb-spread{scroll-margin-top:80px}
+  .nb-page{scroll-margin-top:80px}
+  .nb-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);border:2px solid var(--ink);font-family:"Caveat",cursive;font-size:22px;padding:6px 16px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-decoration:none}
+  .nb-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .nb-btn:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink)}
+  .nb-btn-primary{background:var(--red);color:#fff;border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+  .nb-btn-small{font-size:18px;padding:4px 12px;box-shadow:2px 2px 0 var(--ink)}
+  .nb-fab{position:fixed;right:24px;bottom:24px;z-index:90;width:90px;height:90px;background:#fff48a;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-6deg);box-shadow:3px 4px 0 rgba(0,0,0,.08),0 8px 16px rgba(0,0,0,.1);transition:transform .15s}
+  .nb-fab:hover{transform:rotate(-3deg) scale(1.05)}
+  .nb-fab::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-4deg);width:50px;height:14px;background:rgba(244,195,60,.7);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  @keyframes nb-fade{from{opacity:0}to{opacity:1}}
+  @keyframes nb-drop{from{opacity:0;transform:rotate(-3deg) translateY(-30px) scale(.95)}to{opacity:1;transform:rotate(-1deg) translateY(0) scale(1)}}
+  .nb-dots::after{content:'';animation:nb-blink 1.2s steps(3) infinite}
+  @keyframes nb-blink{0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'}}
+  ::-webkit-scrollbar{width:12px}
+  ::-webkit-scrollbar-track{background:var(--paper)}
+  ::-webkit-scrollbar-thumb{background:var(--pencil);border:3px solid var(--paper);border-radius:6px}
 </style>
 </head>
 <body>
 <div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<!-- Data (plain JS) -->
+<script>
+window.ndata = {
+  identity: { name:"Vipul Yadav", role:"Full-Stack + AI Engineer", pitch:"I ship AI-powered web apps. The rest is noise.", sub:"B.Tech CSE · BTKIT '27 · Haridwar, IN", status:"open · summer '26 SE intern" },
+  manifesto: [
+    { done:true,  text:"Ship before it's pretty. Polish on the next branch." },
+    { done:true,  text:"Reading papers ≠ understanding. Build the toy." },
+    { done:true,  text:"MERN + AI is one product, not two stacks." },
+    { done:false, text:"Stop optimizing prematurely. Stop." },
+    { done:false, text:"Write the README first." },
+  ],
+  experience: [
+    { co:"ColoredCow", role:"Software Engineer Intern", date:"May 2025 — present", tape:'#a8d4a8', tapeAngle:-3, bullets:["Production WordPress + React on real client work","First PR merged in week 2","Pairing daily with senior engineers on REST integrations"], tags:["react","wordpress","rest"] },
+    { co:"HACKGROUND INDIA 2K25", role:"Hackathon Finalist", date:"Sep 2025 · ThoughtWorks Gurugram", tape:'#f7d36b', tapeAngle:4, bullets:["Top finalist · 24h hackathon · AI prototype","Pitched MVP in front of 30+ judges","Got real users on day one"], tags:["llm","rapid","pitch"] },
+  ],
+  projects: [
+    { slug:"copreper", title:"COPREPER", caption:"AI mock-interview platform. 50+ real sessions.", stack:["react","node","openai","whisper"], angle:-3, polaroid:'#fff8e6', img:'assets/copreper.png', bullets:["Real-time Whisper transcript + GPT-4 evaluator chain","Custom rubric scoring across 5 dimensions","Session replay with timestamped feedback overlay"], metric:"50+ sessions · 1.4s latency", link:"copreper.vercel.app" },
+    { slug:"nishaan", title:"Nishaan", caption:"Decentralized digital evidence vault. Tamper-proof.", stack:["solidity","ipfs","next.js"], angle:2.5, polaroid:'#eef4ff', img:'assets/nishaan.png', bullets:["ZK access proofs for evidence chain","ERC-721 evidence tokens with full provenance","Audit trail visible to courts, immutable"], metric:"-38% gas · 200+ txs" },
+    { slug:"bert-emotion", title:"BERT Emotion", caption:"Fine-tuned BERT, 7-class sentiment, F1 0.89.", stack:["pytorch","huggingface","fastapi"], angle:-1.5, polaroid:'#fff0f0', img:'assets/bert-emotion.png', bullets:["12k labeled reviews + active learning loop","FastAPI inference, 80ms p50","SHAP attributions per token for debugging"], metric:"F1 0.89 · 80ms p50" },
+    { slug:"tfidf-resume", title:"Resume Matcher", caption:"Classic NLP beats GPT-3.5 on 200-pair benchmark.", stack:["python","sklearn","spacy"], angle:3, polaroid:'#eafff0', bullets:["90%+ accuracy vs hand-labeled gold set","Streamlit explanation: top contributing terms","Drop-in CLI for ATS pipelines"], metric:"90%+ acc · $0 cost" },
+  ],
+  skills: { daily:["React","Next.js","Node","TypeScript","Python","MongoDB"], favorite:["PyTorch","BERT","LangChain","OpenAI"], learning:["Rust","Solidity","tRPC"], rusty:["Java","C++"] },
+  certs: [
+    { date:"Sep '25", label:"HACKGROUND INDIA — Finalist", gold:true },
+    { date:"Jul '25", label:"Meta · Front-End Developer (Coursera)" },
+    { date:"Apr '25", label:"AWS Cloud Practitioner Essentials" },
+    { date:"Feb '25", label:"Deep Learning Specialization · deeplearning.ai" },
+    { date:"Nov '24", label:"BTKIT CodeFest — 2nd of 200+", gold:true },
+    { date:"Aug '24", label:"Full-Stack Open · MERN · U. Helsinki" },
+  ],
+  blog: [
+    { date:"Sep 14", read:7, title:"Why I stopped using vector DBs for small RAGs", excerpt:"Postgres + pgvector beats every dedicated DB under 100k chunks." },
+    { date:"Aug 02", read:4, title:"The tiniest useful Whisper wrapper", excerpt:"60 lines of FastAPI gets you 90% of the way to a real product." },
+    { date:"Jun 21", read:9, title:"Notes on shipping COPREPER to 50 strangers", excerpt:"Real users break onboarding in ways you can't anticipate." },
+  ],
+  contact: [
+    { k:"email",    v:"vipul.yadav@coloredcow.in", primary:true, href:"mailto:vipul.yadav@coloredcow.in" },
+    { k:"github",   v:"github.com/Vipul-Ydv",       href:"https://github.com/Vipul-Ydv" },
+    { k:"linkedin", v:"in/vipul-ydv",                href:"https://linkedin.com/in/vipul-ydv" },
+    { k:"x",        v:"@vipulbuilds",                 href:"https://x.com/vipulbuilds" },
+    { k:"site",     v:"vipulydv.me",                  href:"https://vipulydv.me" },
+  ],
+  hirenSuggestions: [
+    { label:"Show me COPREPER",            target:"projects" },
+    { label:"Jump to experience",          target:"experience" },
+    { label:"What's his strongest stack?", ask:true },
+    { label:"Is he free for Summer '26?",  ask:true },
+    { label:"Tell me about Nishaan",       ask:true },
+  ],
+};
+</script>
 
-<script src="data.js"></script>
-<script type="text/babel" src="scribbles.js"></script>
-<script type="text/babel" src="pages-1.js"></script>
-<script type="text/babel" src="pages-2.js"></script>
-<script type="text/babel" src="pages-3.js"></script>
-<script type="text/babel" src="hiren.js"></script>
-<script type="text/babel" src="app.js"></script>
+<!-- Scribbles -->
+<script type="text/babel">
+const ink='#1a1f2e',red='#c83030',blue='#2a4a8a',pencil='#5a6070';
+const Underline=({w=200,color=red,thick=2.4,style={}})=>(<svg width={w} height="14" viewBox={`0 0 ${w} 14`} style={{display:'block',overflow:'visible',...style}}><path d={`M 4 8 Q ${w*.15} 4 ${w*.3} 7 T ${w*.6} 8 T ${w*.85} 6 T ${w-4} 9`} fill="none" stroke={color} strokeWidth={thick} strokeLinecap="round"/></svg>);
+const DoubleUnderline=({w=200,color=red,style={}})=>(<svg width={w} height="16" viewBox={`0 0 ${w} 16`} style={{display:'block',overflow:'visible',...style}}><path d={`M 4 6 Q ${w*.2} 3 ${w*.45} 5 T ${w-4} 7`} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round"/><path d={`M 6 11 Q ${w*.25} 8 ${w*.5} 10 T ${w-6} 12`} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round"/></svg>);
+const ScribbleCircle=({w=120,h=50,color=red,style={}})=>(<svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{display:'block',overflow:'visible',...style}}><path d={`M ${w*.95} ${h*.5} C ${w*.95} ${h*.15},${w*.6} ${h*.05},${w*.45} ${h*.08} S ${w*.05} ${h*.3},${w*.06} ${h*.55} S ${w*.3} ${h*.95},${w*.55} ${h*.92} S ${w*.92} ${h*.78},${w*.94} ${h*.5} Z`} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+const ArrowCurved=({w=100,h=80,color=red,flip=false,style={}})=>(<svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{display:'block',overflow:'visible',transform:flip?'scaleX(-1)':'none',...style}}><path d={`M ${w*.1} ${h*.15} Q ${w*.5} ${h*.05},${w*.65} ${h*.5} T ${w*.85} ${h*.85}`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d={`M ${w*.85} ${h*.85} L ${w*.7} ${h*.78} M ${w*.85} ${h*.85} L ${w*.78} ${h*.66}`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>);
+const ArrowWavy=({w=80,color=red,style={}})=>(<svg width={w} height="22" viewBox={`0 0 ${w} 22`} style={{display:'inline-block',verticalAlign:'middle',overflow:'visible',...style}}><path d={`M 4 11 Q ${w*.2} 4,${w*.4} 11 T ${w*.75} 11 L ${w-8} 11`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d={`M ${w-8} 11 L ${w-16} 5 M ${w-8} 11 L ${w-16} 17`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>);
+const StarBurst=({s=30,color=red,style={}})=>(<svg width={s} height={s} viewBox="0 0 30 30" style={{display:'block',overflow:'visible',...style}}><g stroke={color} strokeWidth="2" strokeLinecap="round" fill="none"><line x1="15" y1="3" x2="15" y2="27"/><line x1="3" y1="15" x2="27" y2="15"/><line x1="6" y1="6" x2="24" y2="24"/><line x1="24" y1="6" x2="6" y2="24"/></g></svg>);
+const Checkbox=({checked=false,s=18,color=ink,style={}})=>(<svg width={s} height={s} viewBox="0 0 20 20" style={{display:'inline-block',verticalAlign:'-3px',overflow:'visible',...style}}><path d="M 2 3 L 17 2 L 18 16 L 3 17 Z" fill="none" stroke={color} strokeWidth="1.6" strokeLinejoin="round"/>{checked&&(<path d="M 5 9 L 9 13 L 16 4" fill="none" stroke={red} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>)}</svg>);
+const Strikethrough=({w=100,color=red,style={}})=>(<svg width={w} height="6" viewBox={`0 0 ${w} 6`} style={{display:'block',position:'absolute',left:0,top:'50%',transform:'translateY(-2px)',overflow:'visible',...style}}><path d={`M 2 3 Q ${w*.3} 1,${w*.5} 3 T ${w-2} 3`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>);
+const Bracket=({h=100,side='left',color=ink,style={}})=>{const w=18;const d=side==='left'?`M ${w-2} 3 Q 2 4,3 ${h*.5} T ${w-2} ${h-3}`:`M 3 3 Q ${w-2} 4,${w-3} ${h*.5} T 3 ${h-3}`;return(<svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{overflow:'visible',...style}}><path d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round"/></svg>);};
+const TornEdge=({w=600,color='#fdfcf6',flip=false,style={}})=>{const seg=18,pts=[];for(let i=0;i<=seg;i++){const x=(i/seg)*w;const y=4+(((i*37)%11)-5)*.9+(((i*13)%7)-3)*.6;pts.push([x,Math.max(2,y)]);}let d=`M 0 14 L 0 ${pts[0][1]} `;for(const[x,y]of pts)d+=`L ${x} ${y} `;d+=`L ${w} 14 Z`;return(<svg width={w} height="14" viewBox={`0 0 ${w} 14`} preserveAspectRatio="none" style={{display:'block',transform:flip?'scaleY(-1)':'none',...style}}><path d={d} fill={color}/></svg>);};
+const Tape=({w=100,color='#f7d36b',angle=-8,style={}})=>(<div style={{width:w,height:22,background:`${color}cc`,transform:`rotate(${angle}deg)`,boxShadow:'0 1px 2px rgba(0,0,0,.08)',backgroundImage:'repeating-linear-gradient(90deg,transparent 0,transparent 8px,rgba(0,0,0,.04) 8px,rgba(0,0,0,.04) 9px)',clipPath:'polygon(2% 30%,98% 0%,100% 70%,0% 100%)',...style}}/>);
+const StickyTag=({children,color='#f7d36b',angle=-2,style={}})=>(<span style={{display:'inline-block',padding:'4px 10px',background:color,color:ink,fontFamily:'"Patrick Hand","Caveat",sans-serif',fontSize:16,lineHeight:1.1,transform:`rotate(${angle}deg)`,boxShadow:'1px 1.5px 0 rgba(0,0,0,.1)',...style}}>{children}</span>);
+const Margin=({children,angle=-3,color=red,style={}})=>(<div style={{fontFamily:'"Caveat","Patrick Hand",sans-serif',fontSize:22,lineHeight:1.15,color,transform:`rotate(${angle}deg)`,transformOrigin:'left center',...style}}>{children}</div>);
+const Marker=({children,color='#fff48a'})=>(<span style={{background:`linear-gradient(180deg,transparent 50%,${color} 50%,${color} 92%,transparent 92%)`,padding:'0 2px'}}>{children}</span>);
+window.Scribbles={Underline,DoubleUnderline,ScribbleCircle,ArrowCurved,ArrowWavy,StarBurst,Checkbox,Strikethrough,Bracket,TornEdge,Tape,StickyTag,Margin,Marker,COL:{ink,red,blue,pencil}};
+</script>
+
+<!-- Pages 1: Hero, About, Experience -->
+<script type="text/babel">
+const {Underline,DoubleUnderline,ScribbleCircle,ArrowCurved,ArrowWavy,StarBurst,Checkbox,Strikethrough,Bracket,TornEdge,Tape,StickyTag,Margin,Marker,COL}=window.Scribbles;
+const Spread=({children,style={}})=>(<div className="nb-spread" style={{position:'relative',background:'#fdfcf6',boxShadow:'0 1px 0 rgba(0,0,0,.05),0 8px 24px rgba(40,30,15,.08),0 30px 60px -20px rgba(40,30,15,.12)',display:'grid',gridTemplateColumns:'1fr 1fr',minHeight:720,...style}}><div style={{position:'absolute',left:'50%',top:0,bottom:0,width:2,transform:'translateX(-1px)',pointerEvents:'none',background:'linear-gradient(to right,transparent 0%,rgba(0,0,0,.18) 40%,rgba(0,0,0,.22) 50%,rgba(0,0,0,.18) 60%,transparent 100%)',boxShadow:'0 0 18px rgba(0,0,0,.18)',zIndex:5}}/><div style={{position:'absolute',top:-1,left:0,right:0}}><TornEdge w={1300} flip/></div><div style={{position:'absolute',bottom:-1,left:0,right:0}}><TornEdge w={1300}/></div>{children}</div>);
+const PageL=({children,num,style={}})=>(<div style={{position:'relative',padding:'46px 40px 60px 56px',...style}}>{num&&<div style={{position:'absolute',bottom:22,left:36,fontFamily:'"Caveat",cursive',fontSize:18,color:COL.pencil}}>— {num} —</div>}{children}</div>);
+const PageR=({children,num,style={}})=>(<div style={{position:'relative',padding:'46px 56px 60px 40px',...style}}>{num&&<div style={{position:'absolute',bottom:22,right:36,fontFamily:'"Caveat",cursive',fontSize:18,color:COL.pencil}}>— {num} —</div>}{children}</div>);
+const SectionTitle=({num,title,subtitle})=>(<div><div style={{display:'flex',alignItems:'baseline',gap:14}}><span style={{fontFamily:'"Caveat",cursive',fontSize:28,color:COL.red,transform:'rotate(-2deg)',display:'inline-block'}}>§ {num}</span><h2 style={{fontFamily:'"Caveat",cursive',fontSize:60,fontWeight:700,margin:0,color:COL.ink,lineHeight:.95}}>{title}</h2></div><Underline w={Math.max(180,title.length*36)} color={COL.ink} thick={3} style={{marginLeft:4,marginTop:-2}}/><div style={{marginTop:8,fontFamily:'"Patrick Hand",cursive',fontSize:19,color:COL.pencil}}>↳ {subtitle}</div></div>);
+const Scrap=({children,angle=0,top=0,left=0,color='#fff'})=>(<div style={{position:'absolute',top,left,background:color,padding:'6px 14px',fontFamily:'"Caveat",cursive',transform:`rotate(${angle}deg)`,boxShadow:'2px 2px 0 rgba(0,0,0,.06),0 6px 12px rgba(0,0,0,.06)',border:'1px solid rgba(0,0,0,.05)',display:'inline-flex',alignItems:'baseline',whiteSpace:'nowrap'}}>{children}</div>);
+const LedgerRow=({date,tag,body,red:isRed,dashed})=>(<div style={{display:'grid',gridTemplateColumns:'78px 80px 1fr',gap:14,alignItems:'baseline',padding:'4px 0',borderBottom:dashed?`1.5px dashed ${COL.pencil}80`:`1px solid ${COL.pencil}40`}}><span style={{fontFamily:'"Caveat",cursive',fontSize:20,color:isRed?COL.red:COL.ink}}>{date}</span><span style={{fontSize:11,letterSpacing:'.08em',textTransform:'uppercase',color:isRed?'#fff':COL.ink,background:isRed?COL.red:'transparent',border:isRed?'none':`1px solid ${COL.ink}`,padding:'1px 6px',textAlign:'center',justifySelf:'start'}}>{tag}</span><span style={{fontFamily:'"Patrick Hand",cursive',fontSize:19,color:COL.ink}}>{body}</span></div>);
+const HeroPage=({onHiren,onJump})=>(<Spread style={{minHeight:760}}><PageL num="i"><div style={{fontFamily:'"Caveat",cursive',fontSize:22,color:COL.pencil,transform:'rotate(-1deg)'}}>Mon · 04 May '26 · ~9:42pm</div><h1 style={{fontFamily:'"Caveat",cursive',fontWeight:700,fontSize:124,lineHeight:.88,color:COL.ink,margin:'20px 0 0',letterSpacing:'-.01em'}}>Vipul<br/>Yadav<span style={{color:COL.red}}>.</span></h1><div style={{marginTop:-2,marginLeft:6}}><DoubleUnderline w={420} color={COL.red}/></div><div style={{marginTop:32,fontFamily:'"Special Elite",monospace',fontSize:18,color:COL.ink,lineHeight:1.6,maxWidth:460}}>Full-Stack + AI engineer. <Marker>I ship.</Marker> Mock-interview platforms, evidence vaults, BERT classifiers — built end-to-end, run in prod, used by strangers.</div><div style={{marginTop:18,fontFamily:'"Patrick Hand",cursive',fontSize:18,color:COL.pencil}}>B.Tech CSE · BTKIT '27 · Haridwar, IN</div><div style={{marginTop:36,display:'flex',alignItems:'center',gap:18}}><StickyTag color="#a8d4a8" angle={-3} style={{fontSize:18}}>● open · summer '26</StickyTag><Margin angle={-4} color={COL.red} style={{fontSize:22}}>← talk to me!</Margin></div><div style={{marginTop:44,display:'flex',gap:14,alignItems:'center',flexWrap:'wrap'}}><button onClick={()=>onJump('projects')} className="nb-btn nb-btn-primary">see the work <ArrowWavy w={36} color="#fff" style={{marginLeft:4}}/></button><button onClick={onHiren} className="nb-btn">ask HIREN <span style={{marginLeft:6,color:COL.red,fontFamily:'"Caveat",cursive',fontSize:22}}>⌘K</span></button></div><Margin angle={5} color={COL.blue} style={{fontSize:19,marginTop:16,marginLeft:6}}>(HIREN = it's me, but a bot)</Margin></PageL><PageR num="ii"><div style={{position:'relative',width:280,height:340,margin:'8px 0 0 32px',transform:'rotate(3.5deg)',background:'#fff',padding:'12px 12px 50px',boxShadow:'0 6px 22px rgba(0,0,0,.18),0 1px 0 rgba(0,0,0,.06)'}}><div style={{position:'absolute',top:-18,left:32,zIndex:2}}><Tape w={84} color="#a3c4f5" angle={-12}/></div><div style={{position:'absolute',top:-12,right:22,zIndex:2}}><Tape w={56} color="#f3a3a3" angle={18}/></div><img src="assets/vipul.jpeg" alt="Vipul Yadav" style={{width:'100%',height:270,objectFit:'cover',objectPosition:'center 28%',display:'block',filter:'contrast(1.04) saturate(.95)'}}/><div style={{position:'absolute',bottom:10,left:0,right:0,textAlign:'center',fontFamily:'"Caveat",cursive',color:COL.pencil,fontSize:24,lineHeight:1}}>"vipul, freshman year"</div></div><div style={{marginTop:28,marginLeft:-10,position:'relative',height:220}}><Scrap angle={-5} top={0} left={20} color="#fffcf2"><strong style={{color:COL.red,fontSize:32}}>50+</strong><span style={{fontSize:16,color:COL.pencil,marginLeft:6}}>users on COPREPER</span></Scrap><Scrap angle={4} top={42} left={210} color="#fff8e6"><strong style={{color:COL.red,fontSize:32}}>1,247</strong><span style={{fontSize:16,color:COL.pencil,marginLeft:6}}>commits this yr</span></Scrap><Scrap angle={-3} top={104} left={64} color="#eef4ff"><strong style={{color:COL.red,fontSize:32}}>412</strong><span style={{fontSize:16,color:COL.pencil,marginLeft:6}}>LeetCode solved</span></Scrap><Scrap angle={6} top={148} left={240} color="#eafff0"><strong style={{color:COL.red,fontSize:26}}>0 bugs</strong><span style={{fontSize:14,color:COL.pencil,marginLeft:6}}>(in this résumé)</span></Scrap></div></PageR></Spread>);
+const AboutPage=()=>{const m=window.ndata.manifesto;return(<Spread><PageL num="01"><SectionTitle num="01" title="about" subtitle="who, what, why"/><div style={{marginTop:30,fontFamily:'"Special Elite",monospace',fontSize:16,lineHeight:1.85,color:COL.ink,maxWidth:480}}><p style={{margin:'0 0 16px'}}><span style={{fontFamily:'"Caveat",cursive',fontSize:26,color:COL.red}}>Hello,</span></p><p style={{margin:'0 0 14px'}}>I'm a full-stack engineer who fell hard for the AI side. React + Node by day, BERT classifiers and prompt-chain evaluators by night, and I genuinely don't see the seam — it's all one product.</p><p style={{margin:'0 0 14px'}}>Currently <Marker>SE intern at ColoredCow</Marker>, shipping client work on real deadlines. Before that: hackathon finalist at ThoughtWorks Gurugram, second place at BTKIT CodeFest, a stack of certificates I actually finished.</p><p style={{margin:'0 0 14px'}}>I read papers, then build the toy. I write README first. I'm not afraid of a 24h hackathon.</p><p style={{margin:'24px 0 0',fontFamily:'"Caveat",cursive',fontSize:30,color:COL.red,transform:'rotate(-1.5deg)',display:'inline-block'}}>— Vipul</p></div></PageL><PageR num="02"><div style={{position:'absolute',inset:'60px 56px 80px 40px',backgroundImage:`repeating-linear-gradient(to bottom,transparent 0,transparent 33px,${COL.pencil}30 33px,${COL.pencil}30 34px)`,pointerEvents:'none'}}/><div style={{position:'absolute',top:0,bottom:0,left:92,width:1.5,background:COL.red,opacity:.35}}/><div style={{position:'relative'}}><div style={{fontFamily:'"Caveat",cursive',fontSize:44,color:COL.ink,lineHeight:1,marginBottom:4}}>rules I try<br/>to keep</div><Underline w={250} color={COL.red} thick={3}/><Margin angle={-3} color={COL.blue} style={{fontSize:20,position:'absolute',top:8,right:10}}>(mostly)</Margin><ul style={{listStyle:'none',padding:0,margin:'32px 0 0'}}>{m.map((it,i)=>(<li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,height:34,marginBottom:0}}><span style={{flexShrink:0,paddingTop:4}}><Checkbox checked={it.done} s={20} color={COL.ink}/></span><span style={{fontFamily:'"Patrick Hand",cursive',fontSize:22,lineHeight:1.45,color:it.done?COL.ink:COL.pencil,textDecoration:it.done?'line-through':'none',textDecorationColor:COL.red,textDecorationThickness:'2.4px',textDecorationSkipInk:'none'}}>{it.text}</span></li>))}</ul><Margin angle={-2} color={COL.red} style={{fontSize:19,marginTop:28,marginLeft:16}}>↑ work in progress, always</Margin></div></PageR></Spread>);};
+const ExperiencePage=()=>{const exp=window.ndata.experience;return(<Spread><PageL num="03"><SectionTitle num="03" title="experience" subtitle="the receipts"/><Margin angle={-2} color={COL.blue} style={{fontSize:18,marginTop:18,marginLeft:4}}>(in chronological order — newest on right →)</Margin><div style={{marginTop:30}}><div style={{fontFamily:'"Caveat",cursive',fontSize:26,color:COL.ink,marginBottom:6}}>timeline at a glance</div><Underline w={220} color={COL.ink} thick={2}/><div style={{marginTop:22,fontFamily:'"Special Elite",monospace',fontSize:14,color:COL.ink,lineHeight:2}}><LedgerRow date="May '26" tag="present" body="ColoredCow · SE Intern" red/><LedgerRow date="Sep '25" tag="finalist" body="HACKGROUND INDIA 2K25"/><LedgerRow date="Nov '24" tag="2nd" body="BTKIT CodeFest"/><LedgerRow date="2024 →" tag="study" body="B.Tech CSE @ BTKIT"/><LedgerRow date="—" tag="next" body="open for summer '26" red dashed/></div></div><Margin angle={-3} color={COL.red} style={{fontSize:22,marginTop:32,marginLeft:6}}>✱ next stop = your team?</Margin></PageL><PageR num="04" style={{paddingTop:56}}><div style={{display:'flex',flexDirection:'column',gap:36}}>{exp.map((e,i)=>(<article key={i} style={{position:'relative',background:i===0?'#fffcf2':'#fff',padding:'22px 24px 24px',border:`1.5px solid ${COL.ink}25`,transform:`rotate(${i%2?.6:-.5}deg)`,boxShadow:'3px 4px 0 rgba(0,0,0,.07)'}}><div style={{position:'absolute',top:-14,left:24}}><Tape w={90} color={e.tape} angle={e.tapeAngle}/></div><div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:6}}><h3 style={{fontFamily:'"Caveat",cursive',fontSize:38,color:COL.ink,margin:0,lineHeight:1}}>{e.co}</h3><span style={{fontFamily:'"Caveat",cursive',fontSize:20,color:COL.red}}>{e.date.split(' · ')[0]}</span></div><div style={{fontFamily:'"Patrick Hand",cursive',fontSize:19,color:COL.pencil,marginBottom:10}}>{e.role}{e.date.includes('·')?<> · {e.date.split(' · ')[1]}</>:null}</div><ul style={{listStyle:'none',padding:0,margin:0,fontFamily:'"Special Elite",monospace',fontSize:14,color:COL.ink,lineHeight:1.7}}>{e.bullets.map((b,j)=>(<li key={j} style={{display:'flex',gap:10,marginBottom:2}}><span style={{color:COL.red,fontFamily:'"Caveat",cursive',fontSize:22,lineHeight:.9}}>→</span><span>{b}</span></li>))}</ul><div style={{marginTop:14,display:'flex',gap:6,flexWrap:'wrap'}}>{e.tags.map(t=>(<span key={t} style={{fontFamily:'"Patrick Hand",cursive',fontSize:14,color:COL.pencil,background:'#fff48a80',padding:'1px 8px',transform:`rotate(${(t.length%3-1)*.8}deg)`,display:'inline-block'}}>#{t}</span>))}</div></article>))}</div></PageR></Spread>);};
+window.NPages1={Spread,PageL,PageR,HeroPage,AboutPage,ExperiencePage,SectionTitle};
+window.Page=({children,style={}})=>(<div style={{position:'relative',background:'#fdfcf6',padding:'46px 56px 60px',boxShadow:'0 1px 0 rgba(0,0,0,.05),0 8px 24px rgba(40,30,15,.08),0 30px 60px -20px rgba(40,30,15,.12)',...style}}><div style={{position:'absolute',top:-1,left:0,right:0}}><TornEdge w={1300} flip/></div><div style={{position:'absolute',bottom:-1,left:0,right:0}}><TornEdge w={1300}/></div>{children}</div>);
+</script>
+
+<!-- Pages 2: Projects, Skills, Certs -->
+<script type="text/babel">
+const {Underline:U2,ScribbleCircle:SC2,ArrowCurved:AC2,ArrowWavy:AW2,StarBurst:SB2,Checkbox:CB2,Bracket:BR2,Tape:T2,StickyTag:ST2,Margin:MG2,Marker:MK2,COL:C2}=window.Scribbles;
+const {Spread:SP2,PageL:PL2,PageR:PR2,SectionTitle:STL2}=window.NPages1;
+const ProjectCard=({p,open,setFocus,big=false})=>(<article onClick={()=>setFocus(open?null:p.slug)} style={{position:'relative',background:'#fff',padding:big?'14px 14px 22px':'12px 12px 16px',boxShadow:'0 2px 0 rgba(0,0,0,.06),0 10px 24px rgba(40,30,15,.12)',transform:`rotate(${p.angle}deg) ${open?'translateY(-4px) scale(1.01)':''}`,cursor:'pointer',transition:'transform .25s,box-shadow .25s',border:open?`2px solid ${C2.red}`:'1px solid rgba(0,0,0,.05)'}}><div style={{position:'absolute',top:-10,left:-8}}><T2 w={big?100:70} color={p.angle>0?'#a3c4f5':'#f7d36b'} angle={p.angle>0?-16:12}/></div><div style={{height:big?280:150,background:p.polaroid,backgroundImage:p.img?'none':'repeating-linear-gradient(45deg,rgba(0,0,0,.04) 0,rgba(0,0,0,.04) 6px,transparent 6px,transparent 14px)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Caveat",cursive',fontSize:big?44:28,color:C2.ink,overflow:'hidden',position:'relative'}}>{p.img?<img src={p.img} alt={p.title} style={{width:'100%',height:'100%',objectFit:'cover',filter:'contrast(1.02) saturate(.95)'}}/>:p.title}</div><div style={{padding:big?'14px 6px 4px':'10px 4px 2px',fontFamily:'"Caveat",cursive',fontSize:big?32:22,color:C2.ink,lineHeight:1.05}}>{p.title}{p.link&&<span style={{fontSize:14,color:C2.red,marginLeft:8}}>↗ live</span>}</div><div style={{padding:big?'0 6px 6px':'0 4px 4px',fontFamily:'"Patrick Hand",cursive',fontSize:big?17:14,color:C2.pencil,lineHeight:1.3}}>{p.caption}</div><div style={{padding:big?'8px 6px 0':'6px 4px 0',display:'flex',gap:4,flexWrap:'wrap'}}>{p.stack.slice(0,big?99:3).map(s=>(<span key={s} style={{fontFamily:'"Patrick Hand",cursive',fontSize:big?13:12,color:C2.ink,background:'#fff48a',padding:'0 6px'}}>{s}</span>))}</div><div style={{marginTop:8,padding:big?'0 6px':'0 4px',fontFamily:'"Caveat",cursive',fontSize:big?20:16,color:C2.red}}>{p.metric}</div>{open&&big&&(<div style={{marginTop:12,padding:'12px 8px 4px',borderTop:`1.5px dashed ${C2.pencil}80`}}><div style={{fontFamily:'"Caveat",cursive',fontSize:20,color:C2.ink,marginBottom:4}}>notes from the build:</div><ul style={{listStyle:'none',padding:0,margin:0,fontFamily:'"Special Elite",monospace',fontSize:13,color:C2.ink,lineHeight:1.6}}>{p.bullets.map((b,i)=>(<li key={i} style={{display:'flex',gap:8,marginBottom:2}}><span style={{color:C2.red}}>→</span>{b}</li>))}</ul></div>)}</article>);
+const ProjectsPage=({focus,setFocus})=>{const all=window.ndata.projects,hero=all[0],rest=all.slice(1);return(<SP2 style={{minHeight:820}}><PL2 num="05"><STL2 num="04" title="projects" subtitle="the work, pinned"/><MG2 angle={-2} color={C2.red} style={{fontSize:19,marginTop:14,marginLeft:4}}>↓ favorite first — built end-to-end, in prod</MG2><div style={{marginTop:30,position:'relative'}}><ProjectCard p={hero} open={focus===hero.slug} setFocus={setFocus} big/></div></PL2><PR2 num="06" style={{paddingTop:56}}><div style={{fontFamily:'"Caveat",cursive',fontSize:28,color:C2.ink,marginBottom:4,transform:'rotate(-1deg)',display:'inline-block'}}>+ more from the wall</div><U2 w={220} color={C2.ink} thick={2}/><div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'32px 24px',marginTop:28}}>{rest.map(p=>(<ProjectCard key={p.slug} p={p} open={focus===p.slug} setFocus={setFocus}/>))}</div><div style={{marginTop:28,fontFamily:'"Patrick Hand",cursive',fontSize:18,color:C2.pencil,display:'flex',justifyContent:'space-between',borderTop:`1.5px dashed ${C2.pencil}50`,paddingTop:14}}><span>↑ tap any polaroid to peek behind</span><span style={{color:C2.red}}>more on github ↗</span></div></PR2></SP2>);};
+const StickyCol=({title,items,color,angle=0,strike})=>(<div style={{background:color,padding:'18px 16px 22px',transform:`rotate(${angle}deg)`,boxShadow:'3px 4px 0 rgba(0,0,0,.08),0 8px 16px rgba(0,0,0,.08)',minHeight:220,position:'relative'}}><div style={{position:'absolute',top:-12,left:20}}><T2 w={50} color="#ffffff" angle={-6}/></div><div style={{fontFamily:'"Caveat",cursive',fontSize:26,color:C2.ink,marginBottom:6}}>{title}</div><div style={{width:'70%',height:1.5,background:C2.ink,opacity:.4,marginBottom:12}}/><ul style={{listStyle:'none',padding:0,margin:0,fontFamily:'"Patrick Hand",cursive',fontSize:20,color:C2.ink,lineHeight:1.55}}>{items.map(it=>(<li key={it} style={{display:'flex',alignItems:'center',gap:8}}><span style={{color:C2.red,width:14}}>—</span>{strike?<span style={{color:C2.ink,opacity:.7,textDecoration:'line-through',textDecorationColor:C2.red,textDecorationThickness:'2px',textDecorationSkipInk:'none'}}>{it}</span>:it}</li>))}</ul></div>);
+const SkillsPage=()=>{const s=window.ndata.skills;return(<SP2 style={{minHeight:680}}><PL2 num="07"><STL2 num="05" title="stack" subtitle="what I bring to the table"/><MG2 angle={-2} color={C2.blue} style={{fontSize:19,marginTop:16,marginLeft:4}}>(tools, not religions — I pick whatever ships)</MG2><div style={{marginTop:36,fontFamily:'"Caveat",cursive',fontSize:38,color:C2.ink,lineHeight:1.1,transform:'rotate(-1deg)'}}>"MERN by day,<br/><span style={{color:C2.red}}>PyTorch</span> by night."</div><U2 w={300} color={C2.red} thick={3} style={{marginTop:6}}/><div style={{marginTop:40,fontFamily:'"Patrick Hand",cursive',fontSize:22,color:C2.ink,marginBottom:10}}>every day:</div><div style={{display:'flex',flexWrap:'wrap',gap:8}}>{s.daily.map((it,i)=>(<span key={it} style={{fontFamily:'"Patrick Hand",cursive',fontSize:19,color:C2.ink,background:'#fff',border:`1.5px solid ${C2.ink}`,padding:'3px 12px',transform:`rotate(${((i*37)%5-2)*1}deg)`,display:'inline-block',boxShadow:'2px 2px 0 rgba(0,0,0,.06)'}}>{it}</span>))}</div></PL2><PR2 num="08" style={{paddingTop:56}}><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:22}}><StickyCol title="favorite ★" items={s.favorite} color="#fff48a" angle={-2}/><StickyCol title="learning" items={s.learning} color="#a3c4f5" angle={1.5}/><StickyCol title="rusty" items={s.rusty} color="#f3a3a3" angle={-1} strike/></div><div style={{marginTop:36,paddingTop:18,borderTop:`1.5px dashed ${C2.pencil}50`,fontFamily:'"Patrick Hand",cursive',fontSize:18,color:C2.pencil,display:'flex',justifyContent:'space-between'}}><span>↑ pinned to the wall above the desk</span><span style={{color:C2.red}}>* yellow = real love</span></div></PR2></SP2>);};
+const TicketStub=({c,i})=>(<div style={{display:'grid',gridTemplateColumns:'90px 14px 1fr 60px',background:'#fff',border:`1.5px solid ${C2.ink}40`,transform:`rotate(${i%2?.3:-.4}deg)`,boxShadow:'2px 2px 0 rgba(0,0,0,.06)',overflow:'visible',alignItems:'stretch'}}><div style={{background:'#fffcf2',padding:'10px 8px',fontFamily:'"Caveat",cursive',fontSize:22,color:C2.red,borderRight:`1.5px dashed ${C2.pencil}80`,display:'flex',alignItems:'center',justifyContent:'center'}}>{c.date}</div><div style={{background:'transparent',position:'relative'}}><div style={{position:'absolute',inset:0,backgroundImage:`radial-gradient(circle at 7px 7px,${C2.pencil}40 1.5px,transparent 1.6px)`,backgroundSize:'14px 14px',backgroundPosition:'0 4px'}}/></div><div style={{padding:'10px 14px',fontFamily:'"Patrick Hand",cursive',fontSize:18,color:C2.ink,lineHeight:1.3,display:'flex',alignItems:'center'}}>{c.label}</div><div style={{padding:'10px 8px',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Patrick Hand",cursive',fontSize:13,color:C2.pencil,borderLeft:`1.5px dashed ${C2.pencil}80`}}>cert.</div></div>);
+const CertsPage=()=>{const certs=window.ndata.certs;return(<SP2 style={{minHeight:700}}><PL2 num="09"><STL2 num="06" title="receipts" subtitle="certs, wins, paper trail"/><MG2 angle={-2} color={C2.blue} style={{fontSize:19,marginTop:16,marginLeft:4}}>(pinned to the corkboard, not framed)</MG2><div style={{marginTop:30}}><div style={{fontFamily:'"Caveat",cursive',fontSize:32,color:C2.red,marginBottom:4,transform:'rotate(-1deg)',display:'inline-block'}}>★ wins</div><U2 w={120} color={C2.red} thick={2}/><div style={{display:'flex',flexDirection:'column',gap:18,marginTop:22}}>{certs.filter(c=>c.gold).map((c,i)=>(<div key={i} style={{background:'#fffcf2',padding:'18px 22px',border:`2px solid ${C2.red}`,position:'relative',transform:`rotate(${i%2?.5:-.7}deg)`,boxShadow:'3px 4px 0 rgba(200,48,48,.15)'}}><div style={{position:'absolute',top:-14,right:24}}><T2 w={70} color="#f7d36b" angle={6}/></div><div style={{position:'absolute',top:12,right:14,fontFamily:'"Caveat",cursive',fontSize:22,color:C2.red,transform:'rotate(-6deg)',border:`2px solid ${C2.red}`,padding:'1px 8px',letterSpacing:'.06em'}}>WIN</div><div style={{fontFamily:'"Caveat",cursive',fontSize:22,color:C2.red,marginBottom:4}}>{c.date}</div><div style={{fontFamily:'"Patrick Hand",cursive',fontSize:22,color:C2.ink,lineHeight:1.25,paddingRight:70}}>{c.label}</div></div>))}</div></div></PL2><PR2 num="10" style={{paddingTop:56}}><div style={{fontFamily:'"Caveat",cursive',fontSize:32,color:C2.ink,marginBottom:4,transform:'rotate(-1deg)',display:'inline-block'}}>+ certs collected</div><U2 w={220} color={C2.ink} thick={2}/><div style={{marginTop:28,display:'flex',flexDirection:'column',gap:12}}>{certs.filter(c=>!c.gold).map((c,i)=>(<TicketStub key={i} c={c} i={i}/>))}</div><MG2 angle={-2} color={C2.red} style={{fontSize:20,marginTop:28,marginLeft:8}}>✱ I finish what I start</MG2></PR2></SP2>);};
+window.NPages2={ProjectsPage,SkillsPage,CertsPage};
+</script>
+
+<!-- Pages 3: Blog, Contact -->
+<script type="text/babel">
+const {Underline:U3,ArrowWavy:AW3,Tape:T3,StickyTag:ST3,Margin:MG3,Marker:MK3,COL:C3}=window.Scribbles;
+const {Spread:SP3,PageL:PL3,PageR:PR3,SectionTitle:STL3}=window.NPages1;
+const BlogPage=()=>{const blog=window.ndata.blog,featured=blog[0],rest=blog.slice(1);return(<SP3 style={{minHeight:680}}><PL3 num="11"><STL3 num="07" title="notes" subtitle="things I figured out"/><MG3 angle={-2} color={C3.blue} style={{fontSize:19,marginTop:16,marginLeft:4}}>(slow &amp; infrequent — quality over reach)</MG3><article style={{marginTop:32,position:'relative',background:'#fffcf2',border:`1.5px solid ${C3.ink}25`,padding:'28px 30px 30px',boxShadow:'3px 4px 0 rgba(0,0,0,.07)',transform:'rotate(-.5deg)'}}><div style={{position:'absolute',top:-16,right:30}}><T3 w={90} color="#f7d36b" angle={8}/></div><div style={{position:'absolute',top:-16,left:36}}><T3 w={70} color="#a3c4f5" angle={-12}/></div><div style={{display:'flex',justifyContent:'space-between',fontFamily:'"Caveat",cursive',fontSize:22,color:C3.red,marginBottom:14}}><span>{featured.date} '25 ✱ latest</span><span style={{color:C3.pencil}}>{featured.read} min</span></div><h3 style={{fontFamily:'"Caveat",cursive',fontSize:38,color:C3.ink,lineHeight:1.05,margin:'0 0 14px'}}>{featured.title}</h3><U3 w={300} color={C3.red} thick={2}/><p style={{marginTop:18,fontFamily:'"Special Elite",monospace',fontSize:15,color:C3.ink,lineHeight:1.7}}>{featured.excerpt}</p><div style={{marginTop:18,fontFamily:'"Caveat",cursive',fontSize:22,color:C3.red,display:'flex',alignItems:'center',gap:6}}>read on <AW3 w={36} color={C3.red}/></div></article></PL3><PR3 num="12" style={{paddingTop:56}}><div style={{fontFamily:'"Caveat",cursive',fontSize:32,color:C3.ink,marginBottom:4,transform:'rotate(-1deg)',display:'inline-block'}}>+ the archive</div><U3 w={180} color={C3.ink} thick={2}/><MG3 angle={-2} color={C3.pencil} style={{fontSize:18,marginTop:14,marginLeft:4}}>(older notebooks, filed away)</MG3><div style={{marginTop:28,display:'flex',flexDirection:'column',gap:22}}>{rest.map((b,i)=>(<article key={i} style={{position:'relative',background:'#fff',borderLeft:`4px solid ${C3.red}`,padding:'14px 18px 16px',transform:`rotate(${i%2?.3:-.4}deg)`,boxShadow:'2px 3px 0 rgba(0,0,0,.06)',cursor:'pointer'}}><div style={{display:'flex',justifyContent:'space-between',fontFamily:'"Caveat",cursive',fontSize:18,color:C3.red,marginBottom:4}}><span>{b.date} '25</span><span style={{color:C3.pencil}}>{b.read} min</span></div><h4 style={{fontFamily:'"Caveat",cursive',fontSize:26,color:C3.ink,margin:'0 0 8px',lineHeight:1.1}}>{b.title}</h4><p style={{fontFamily:'"Patrick Hand",cursive',fontSize:16,color:C3.pencil,margin:0,lineHeight:1.5}}>{b.excerpt}</p></article>))}</div><div style={{marginTop:28,paddingTop:14,borderTop:`1.5px dashed ${C3.pencil}50`,fontFamily:'"Patrick Hand",cursive',fontSize:17,color:C3.pencil,display:'flex',justifyContent:'space-between'}}><span>↑ enjoy. take notes.</span><span style={{color:C3.red}}>RSS coming when I feel like it</span></div></PR3></SP3>);};
+const ContactPage=({onHiren})=>(<SP3 style={{minHeight:660}}><PL3 num="13"><STL3 num="08" title="say hi" subtitle="open for summer '26"/><h3 style={{fontFamily:'"Caveat",cursive',fontSize:64,lineHeight:.95,color:C3.ink,margin:'40px 0 12px',transform:'rotate(-1deg)'}}>let's <span style={{color:C3.red}}>talk.</span></h3><U3 w={260} color={C3.red} thick={3}/><div style={{marginTop:28,fontFamily:'"Special Elite",monospace',fontSize:16,color:C3.ink,lineHeight:1.75,maxWidth:460}}>Looking for a Summer '26 SE internship — <MK3>remote, hybrid or onsite</MK3>. Strong on full-stack + applied AI. I read DMs, I reply within a day, and I'm not afraid of take-homes.</div><div style={{marginTop:32,display:'flex',gap:14,flexWrap:'wrap',alignItems:'center'}}><a href="mailto:vipul.yadav@coloredcow.in" className="nb-btn nb-btn-primary">send an email <AW3 w={32} color="#fff"/></a><button onClick={onHiren} className="nb-btn">ask HIREN first</button></div><MG3 angle={-3} color={C3.blue} style={{fontSize:19,marginTop:24,marginLeft:4}}>(HIREN can answer "what's your stack?" for you)</MG3><div style={{marginTop:60,fontFamily:'"Caveat",cursive',fontSize:28,color:C3.ink,transform:'rotate(-1.5deg)',display:'inline-block'}}>— Vipul ✎</div></PL3><PR3 num="14" style={{paddingTop:80}}><div style={{position:'relative',maxWidth:460,margin:'0 auto'}}><div style={{background:'#fff',padding:'28px 32px 32px',border:`1.5px solid ${C3.ink}30`,boxShadow:'4px 5px 0 rgba(0,0,0,.07)',transform:'rotate(-1deg)',position:'relative'}}><div style={{position:'absolute',top:18,right:24,width:70,height:84,background:'#fffcf2',border:`1.5px dashed ${C3.red}`,padding:6,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Caveat",cursive',fontSize:14,color:C3.red,textAlign:'center',lineHeight:1.1,transform:'rotate(4deg)'}}>✱ priority<br/>haridwar<br/>'26</div><div style={{fontFamily:'"Patrick Hand",cursive',fontSize:16,color:C3.pencil,marginBottom:8}}>FROM:</div><div style={{fontFamily:'"Caveat",cursive',fontSize:28,color:C3.ink,marginBottom:24,lineHeight:1.1}}>Vipul Yadav<br/><span style={{fontSize:18,color:C3.pencil}}>BTKIT '27 · Haridwar, IN</span></div><div style={{fontFamily:'"Patrick Hand",cursive',fontSize:16,color:C3.pencil,marginBottom:6}}>TO: ↓</div><div style={{fontFamily:'"Caveat",cursive',fontSize:24,color:C3.ink,lineHeight:1.2,padding:'0 0 10px'}}>(whoever's reading this)</div><div style={{borderTop:`1.5px dashed ${C3.pencil}80`,marginTop:8,paddingTop:16}}><ul style={{listStyle:'none',padding:0,margin:0}}>{window.ndata.contact.map((r,i,arr)=>(<li key={r.k} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:i<arr.length-1?`1px dotted ${C3.pencil}50`:'none',fontFamily:'"Patrick Hand",cursive',fontSize:18}}><span style={{color:C3.pencil}}>{r.k}</span><a href={r.href} target="_blank" rel="noopener" style={{color:r.primary?C3.red:C3.ink,textDecoration:'none',borderBottom:`1.5px solid ${r.primary?C3.red:'transparent'}`}}>{r.v}</a></li>))}</ul></div></div><div style={{position:'absolute',bottom:-20,left:'50%',transform:'translateX(-50%) rotate(-12deg)',width:64,height:64,borderRadius:'50%',background:C3.red,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Caveat",cursive',fontSize:18,lineHeight:1,textAlign:'center',boxShadow:'0 4px 10px rgba(200,48,48,.3)'}}>v.y.<br/>'26</div></div><div style={{marginTop:60,paddingTop:18,borderTop:`1.5px dashed ${C3.pencil}60`,fontFamily:'"Caveat",cursive',fontSize:20,color:C3.pencil,display:'flex',justifyContent:'space-between'}}><span>— end of notebook —</span><span style={{color:C3.red}}>thanks for reading ✱</span></div></PR3></SP3>);
+window.NPages3={BlogPage,ContactPage};
+</script>
+
+<!-- HIREN -->
+<script type="text/babel">
+const {Underline:UH,ArrowWavy:AWH,Tape:TH,Margin:MGH,COL:CH}=window.Scribbles;
+const NotebookHiren=({open,onClose,onJump})=>{
+  const[query,setQuery]=React.useState('');
+  const[messages,setMessages]=React.useState([{role:'hiren',text:"Hey — I'm HIREN. I'm Vipul's notebook-shaped AI. Ask me anything about him, or pick a shortcut below."}]);
+  const[busy,setBusy]=React.useState(false);
+  const inputRef=React.useRef(null);
+  const scrollRef=React.useRef(null);
+  React.useEffect(()=>{if(open)setTimeout(()=>inputRef.current?.focus(),250);},[open]);
+  React.useEffect(()=>{if(scrollRef.current)scrollRef.current.scrollTop=scrollRef.current.scrollHeight;},[messages,busy]);
+  const ask=async(q)=>{
+    if(!q.trim()||busy)return;
+    setMessages(m=>[...m,{role:'user',text:q}]);setQuery('');setBusy(true);
+    try{const ctx=`You are HIREN, Vipul Yadav's portfolio AI assistant — handwriting style, conversational, wry. Answer in 2-3 short sentences. Vipul: Full-Stack+AI engineer (MERN+PyTorch), B.Tech CSE BTKIT '27, SE Intern at ColoredCow. Open Summer 2026. Stack: React,Next.js,Node,Python,PyTorch,BERT. Projects: COPREPER(AI interviews,50+users),Nishaan(Solidity+IPFS),BERT Emotion(F1 0.89),Resume Matcher(90%+).`;
+    const text=await window.claude.complete({messages:[{role:'user',content:ctx+'\n\nQuestion: '+q}]});
+    setMessages(m=>[...m,{role:'hiren',text:text.trim()}]);}
+    catch{setMessages(m=>[...m,{role:'hiren',text:"Lost the connection — short answer: full-stack+AI engineer, open Summer '26."}]);}
+    setBusy(false);
+  };
+  if(!open)return null;
+  return(<div onClick={onClose} style={{position:'fixed',inset:0,zIndex:1000,background:'rgba(40,30,15,.4)',display:'flex',alignItems:'center',justifyContent:'center',animation:'nb-fade .25s'}}><div onClick={e=>e.stopPropagation()} style={{position:'relative',width:580,maxHeight:'82vh',background:'#fdfcf6',backgroundImage:`repeating-linear-gradient(0deg,transparent 0,transparent 27px,${CH.pencil}25 27px,${CH.pencil}25 28px)`,boxShadow:'0 30px 80px rgba(40,30,15,.5),0 0 0 1px rgba(0,0,0,.05)',padding:'28px 32px 24px',transform:'rotate(-1deg)',animation:'nb-drop .35s cubic-bezier(.2,.9,.3,1.2)',display:'flex',flexDirection:'column'}}><div style={{position:'absolute',top:-18,left:'50%',transform:'translateX(-50%) rotate(-4deg)'}}><TH w={160} color="#f7d36b" angle={0}/></div><button onClick={onClose} style={{position:'absolute',top:14,right:18,background:'transparent',border:'none',cursor:'pointer',fontFamily:'"Caveat",cursive',fontSize:24,color:CH.pencil}}>✕ close</button><div style={{display:'flex',alignItems:'baseline',gap:14,marginBottom:4}}><h2 style={{fontFamily:'"Caveat",cursive',fontSize:52,color:CH.ink,margin:0,lineHeight:.9}}>HIREN</h2><span style={{fontFamily:'"Patrick Hand",cursive',fontSize:18,color:CH.pencil}}>(vipul, but a bot)</span></div><UH w={170} color={CH.red} thick={3}/><div ref={scrollRef} style={{flex:1,overflowY:'auto',minHeight:80,maxHeight:280,marginTop:18,paddingRight:6}}>{messages.map((m,i)=>(<div key={i} style={{marginBottom:16}}><div style={{fontFamily:'"Caveat",cursive',fontSize:20,color:m.role==='user'?CH.blue:CH.red,marginBottom:2}}>{m.role==='user'?'you →':'hiren ←'}</div><div style={{fontFamily:m.role==='user'?'"Caveat",cursive':'"Patrick Hand",cursive',fontSize:m.role==='user'?22:19,color:CH.ink,lineHeight:1.45,paddingLeft:6}}>{m.text}</div></div>))}{busy&&(<div style={{fontFamily:'"Caveat",cursive',fontSize:20,color:CH.pencil,paddingLeft:6}}>✎ thinking<span className="nb-dots">...</span></div>)}</div>{messages.length<3&&!busy&&(<div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0 16px',paddingTop:12,borderTop:`1.5px dashed ${CH.pencil}80`}}>{window.ndata.hirenSuggestions.map((s,i)=>(<button key={i} onClick={()=>s.target?(onJump(s.target),onClose()):ask(s.label)} style={{background:'#fff48a',color:CH.ink,border:`1.5px solid ${CH.ink}40`,padding:'4px 10px',fontFamily:'"Patrick Hand",cursive',fontSize:16,cursor:'pointer',transform:`rotate(${(i%3-1)*1.5}deg)`,boxShadow:'1.5px 1.5px 0 rgba(0,0,0,.08)'}}>{s.target?'→ ':'? '}{s.label}</button>))}</div>)}<div style={{display:'flex',alignItems:'center',gap:10,paddingTop:14,borderTop:`1.5px solid ${CH.ink}30`}}><span style={{fontFamily:'"Caveat",cursive',fontSize:28,color:CH.red}}>✎</span><input ref={inputRef} value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')ask(query);else if(e.key==='Escape')onClose();}} placeholder="write your question…" style={{flex:1,background:'transparent',border:'none',fontFamily:'"Caveat",cursive',fontSize:26,color:CH.ink,outline:'none',borderBottom:`1.5px solid ${CH.pencil}80`,paddingBottom:4}}/><button onClick={()=>ask(query)} disabled={!query.trim()||busy} style={{background:CH.red,color:'#fff',border:'none',fontFamily:'"Caveat",cursive',fontSize:22,padding:'4px 14px',cursor:query.trim()&&!busy?'pointer':'not-allowed',opacity:query.trim()&&!busy?1:.4}}>send →</button></div><div style={{marginTop:10,fontFamily:'"Patrick Hand",cursive',fontSize:13,color:CH.pencil,display:'flex',justifyContent:'space-between'}}><span>↵ to send · ESC to close</span><span>powered by claude</span></div></div></div>);
+};
+window.NotebookHiren=NotebookHiren;
+</script>
+
+<!-- App -->
+<script type="text/babel">
+const{HeroPage,AboutPage,ExperiencePage}=window.NPages1;
+const{ProjectsPage,SkillsPage,CertsPage}=window.NPages2;
+const{BlogPage,ContactPage}=window.NPages3;
+const{COL:CA}=window.Scribbles;
+const SECTIONS=[{key:'about',label:'about',anchor:'p-about'},{key:'experience',label:'experience',anchor:'p-experience'},{key:'projects',label:'projects',anchor:'p-projects'},{key:'skills',label:'stack',anchor:'p-skills'},{key:'certs',label:'receipts',anchor:'p-certs'},{key:'blog',label:'notes',anchor:'p-blog'},{key:'contact',label:'say hi',anchor:'p-contact'}];
+const NotebookApp=()=>{
+  const[hirenOpen,setHirenOpen]=React.useState(false);
+  const[focusedProject,setFocusedProject]=React.useState(null);
+  const[activeSection,setActiveSection]=React.useState('hero');
+  const scrollTo=(key)=>{const s=SECTIONS.find(x=>x.key===key);if(!s)return;const el=document.getElementById(s.anchor);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
+  React.useEffect(()=>{const onKey=(e)=>{if(document.activeElement&&['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setHirenOpen(true);}else if(e.key==='/'||e.key==='?'){e.preventDefault();setHirenOpen(true);}else if(e.key==='Escape')setHirenOpen(false);};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey);},[]);
+  React.useEffect(()=>{const obs=new IntersectionObserver((entries)=>{entries.forEach(en=>{if(en.isIntersecting){const k=en.target.id.replace('p-','');setActiveSection(k);}});},{rootMargin:'-30% 0px -60% 0px'});SECTIONS.forEach(s=>{const el=document.getElementById(s.anchor);if(el)obs.observe(el);});return()=>obs.disconnect();},[]);
+  return(<div className="nb-root"><div className="nb-topbar"><div className="nb-topbar-inner"><span style={{fontFamily:'"Caveat",cursive',fontSize:26,color:CA.ink}}>v.ydv's notebook<span style={{color:CA.red}}>.</span></span><nav style={{display:'flex',gap:18}}>{SECTIONS.slice(0,5).map(s=>(<button key={s.key} onClick={()=>scrollTo(s.key)} className={`nb-tab ${activeSection===s.key?'is-active':''}`}>{s.label}</button>))}</nav><button onClick={()=>setHirenOpen(true)} className="nb-btn nb-btn-small">✎ ask HIREN<span style={{marginLeft:8,padding:'0 5px',border:`1.5px solid ${CA.ink}50`,fontSize:12,fontFamily:'"Special Elite",monospace'}}>⌘K</span></button></div></div><main className="nb-main"><div id="p-hero"><HeroPage onHiren={()=>setHirenOpen(true)} onJump={scrollTo}/></div><div id="p-about"><AboutPage/></div><div id="p-experience"><ExperiencePage/></div><div id="p-projects"><ProjectsPage focus={focusedProject} setFocus={setFocusedProject}/></div><div id="p-skills"><SkillsPage/></div><div id="p-certs"><CertsPage/></div><div id="p-blog"><BlogPage/></div><div id="p-contact"><ContactPage onHiren={()=>setHirenOpen(true)}/></div></main><button onClick={()=>setHirenOpen(true)} className="nb-fab" aria-label="Ask HIREN"><span style={{fontFamily:'"Caveat",cursive',fontSize:22,color:CA.ink,lineHeight:1}}>got a Q?</span><span style={{fontFamily:'"Patrick Hand",cursive',fontSize:14,color:CA.red,marginTop:2}}>ask HIREN ✎</span></button><window.NotebookHiren open={hirenOpen} onClose={()=>setHirenOpen(false)} onJump={scrollTo}/></div>);
+};
+ReactDOM.createRoot(document.getElementById('root')).render(<NotebookApp/>);
+</script>
 </body>
 </html>
