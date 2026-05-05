@@ -126,8 +126,8 @@ window.ndata = {
   ],
 
   hirenSuggestions: [
-    { label: "Show me COPREPER",                target: "projects" },
-    { label: "Jump to experience",              target: "experience" },
+    { label: "Show me COPREPER",                target: "proof" },
+    { label: "Jump to experience",              target: "proof" },
     { label: "What's his strongest stack?",     ask: true },
     { label: "Is he free for Summer '26?",      ask: true },
     { label: "Tell me about Nishaan",           ask: true },
