@@ -5,7 +5,7 @@ window.ndata = {
     role: "Full-Stack + AI Engineer",
     pitch: "I ship AI-powered web apps. The rest is noise.",
     sub: "B.Tech CSE · BTKIT '27 · Haridwar, IN",
-    status: "open · summer '26 SE intern",
+    status: "open · SE internship",
   },
 
   manifesto: [
@@ -20,7 +20,7 @@ window.ndata = {
     {
       co: "ColoredCow",
       role: "Software Engineer Intern",
-      date: "May 2025 — present",
+      date: "Nov 2025 — present",
       tape: '#a8d4a8', tapeAngle: -3,
       bullets: [
         "Production WordPress + React on real client work",
@@ -107,6 +107,10 @@ window.ndata = {
   },
 
   certs: [
+    certs: [
+    { date: "Mar '26", label: "TechFest 2026, BTKUIT — 1st Place Hackathon (Nishaan, solo)", gold: true },
+    { date: "Mar '26", label: "TechFest 2026, BTKUIT — 2nd Place Aerobotics" },
+    { date: "Mar '26", label: "TechFest 2026, BTKUIT — 3rd Place Project Exhibition" },
     { date: "Sep '25", label: "HACKGROUND INDIA — Finalist",        gold: true },
     { date: "Jul '25", label: "Meta · Front-End Developer (Coursera)" },
     { date: "Apr '25", label: "AWS Cloud Practitioner Essentials" },
@@ -134,7 +138,7 @@ window.ndata = {
     { label: "Show me COPREPER",                target: "proof" },
     { label: "Jump to experience",              target: "proof" },
     { label: "What's his strongest stack?",     ask: true },
-    { label: "Is he free for Summer '26?",      ask: true },
+    { label: "Is he open for internships?",     ask: true },
     { label: "Tell me about Nishaan",           ask: true },
   ],
 };
