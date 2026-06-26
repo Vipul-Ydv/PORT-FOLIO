@@ -107,7 +107,6 @@ window.ndata = {
   },
 
   certs: [
-    certs: [
     { date: "Mar '26", label: "TechFest 2026, BTKUIT — 1st Place Hackathon (Nishaan, solo)", gold: true },
     { date: "Mar '26", label: "TechFest 2026, BTKUIT — 2nd Place Aerobotics" },
     { date: "Mar '26", label: "TechFest 2026, BTKUIT — 3rd Place Project Exhibition" },
