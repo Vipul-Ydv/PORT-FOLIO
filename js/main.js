@@ -89,7 +89,7 @@ function initProjectFilter() {
 async function initLeetCodeStats() {
     const USERNAME = 'Vipul-Ydv';
     try {
-        const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${USERNAME}`);
+        const res = await fetch(`https://alfa-leetcode-api.onrender.com/${USERNAME}/solved`);
         if (!res.ok) throw new Error('fetch failed');
         const data = await res.json();
 
@@ -97,7 +97,7 @@ async function initLeetCodeStats() {
             const el = document.getElementById(id);
             if (el && val !== undefined) el.textContent = val;
         };
-        set('lc-total', data.totalSolved);
+        set('lc-total', data.solvedProblem);
         set('lc-easy', data.easySolved);
         set('lc-medium', data.mediumSolved);
         set('lc-hard', data.hardSolved);
