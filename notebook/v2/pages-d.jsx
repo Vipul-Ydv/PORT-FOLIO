@@ -23,6 +23,9 @@ const WhatNextSpread = ({ onHiren }) => (
         <a href="mailto:vipul.ydv01@gmail.com" className="nb-btn nb-btn-primary" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
           send email <ArrowWavy w={28} color="#fff" />
         </a>
+        <a href="vipul_res.pdf" target="_blank" rel="noopener" className="nb-btn" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
+          resume ↓
+        </a>
         <button onClick={onHiren} className="nb-btn" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
           ask HIREN
         </button>
