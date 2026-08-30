@@ -10,6 +10,20 @@ const ALLOWED_ORIGINS = [
 const RATE_LIMIT = { windowMs: 10 * 60_000, max: 3 };
 const MAX_FIELD = 5000;
 
+// Accept the site's own origin — which covers production, Vercel preview
+// deployments and local dev without naming each host — plus the canonical
+// domains. A missing Origin is rejected: browsers always send it on a
+// cross-origin-capable POST, so its absence means the caller is not the site.
+function isAllowedOrigin(origin, host) {
+    if (!origin) return false;
+    if (ALLOWED_ORIGINS.includes(origin)) return true;
+    try {
+        return new URL(origin).host === host;
+    } catch {
+        return false;
+    }
+}
+
 // Per-instance, same caveat as api/chat.js: slows casual abuse, not a
 // determined attacker. Without it this endpoint is an open mail relay.
 const hits = new Map();
@@ -31,7 +45,7 @@ export default async function handler(request, response) {
         return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    if (!ALLOWED_ORIGINS.includes(request.headers.origin)) {
+    if (!isAllowedOrigin(request.headers.origin, request.headers.host)) {
         return response.status(403).json({ error: 'Forbidden' });
     }
 
