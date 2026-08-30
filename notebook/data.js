@@ -107,9 +107,9 @@ window.ndata = {
   },
 
   certs: [
-    { date: "Mar '26", label: "TechFest 2026, BTKUIT — 1st Place Hackathon (Nishaan, solo)", gold: true },
-    { date: "Mar '26", label: "TechFest 2026, BTKUIT — 2nd Place Aerobotics" },
-    { date: "Mar '26", label: "TechFest 2026, BTKUIT — 3rd Place Project Exhibition" },
+    { date: "Mar '26", label: "TechFest 2026, BTKIT — 1st Place Hackathon (Nishaan, solo)", gold: true },
+    { date: "Mar '26", label: "TechFest 2026, BTKIT — 2nd Place Aerobotics" },
+    { date: "Mar '26", label: "TechFest 2026, BTKIT — 3rd Place Project Exhibition" },
     { date: "Sep '25", label: "HACKGROUND INDIA — Finalist",        gold: true },
     { date: "Jul '25", label: "Meta · Front-End Developer (Coursera)" },
     { date: "Apr '25", label: "AWS Cloud Practitioner Essentials" },
