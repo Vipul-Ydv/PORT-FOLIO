@@ -21,6 +21,7 @@
 <meta name="twitter:description" content="Full-Stack + AI Engineer. Open for SE internship opportunities.">
 <meta name="twitter:image" content="https://www.vipulydv.me/img/portfolio.png">
 
+<link rel="canonical" href="https://www.vipulydv.me/">
 <link rel="icon" type="image/svg+xml" href="img/hiren-sketch.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,6 +126,48 @@
   }
   .nb-dots::after { content: ''; animation: nb-blink 1.2s steps(3) infinite; }
   @keyframes nb-blink { 0% { content: '' } 33% { content: '.' } 66% { content: '..' } 100% { content: '...' } }
+
+  img, svg { max-width: 100%; }
+
+  /* ── Responsive ─────────────────────────────────────────────────────
+     The spreads are laid out with inline styles, so these overrides need
+     !important to win. Below 900px the two-page spread becomes a single
+     column: on a phone the right-hand page (contents, blog, contact card)
+     was rendered entirely off-screen. */
+  .nb-topbar-inner { flex-wrap: wrap; row-gap: 8px; }
+
+  @media (max-width: 900px) {
+    .nb-topbar-inner { padding: 0 16px; gap: 12px; }
+    .nb-topbar-nav {
+      order: 3; width: 100%; flex: 1 0 100% !important;
+      justify-content: flex-start !important;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px; gap: 10px !important;
+    }
+    .nb-topbar-nav::-webkit-scrollbar { display: none; }
+    .nb-main { padding-top: 96px !important; }
+    .nb-spread { scroll-margin-top: 96px; }
+
+    .nb-spread {
+      grid-template-columns: 1fr !important;
+      min-height: 0 !important;
+    }
+    .nb-spine { display: none !important; }
+    .nb-page-l, .nb-page-r {
+      padding: 44px 20px 56px !important;
+    }
+    .nb-page-l > [data-page-num], .nb-page-r > [data-page-num] {
+      position: static !important; margin-top: 24px;
+    }
+    .nb-fab {
+      width: 68px !important; height: 68px !important;
+      right: 14px !important; bottom: 14px !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nb-page-l, .nb-page-r { padding: 36px 16px 44px !important; }
+  }
 
   ::-webkit-scrollbar { width: 12px; }
   ::-webkit-scrollbar-track { background: var(--paper); }
