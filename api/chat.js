@@ -16,6 +16,20 @@ const MAX_MESSAGES = 12;      // ~6 turns of context
 const MAX_CHARS = 1500;       // per message
 const RATE_LIMIT = { windowMs: 60_000, max: 12 };
 
+// Accept the site's own origin — which covers production, Vercel preview
+// deployments and local dev without naming each host — plus the canonical
+// domains. A missing Origin is rejected: browsers always send it on a
+// cross-origin-capable POST, so its absence means the caller is not the site.
+function isAllowedOrigin(origin, host) {
+    if (!origin) return false;
+    if (ALLOWED_ORIGINS.includes(origin)) return true;
+    try {
+        return new URL(origin).host === host;
+    } catch {
+        return false;
+    }
+}
+
 // Per-instance counter. Vercel runs several instances, so this throttles
 // casual abuse rather than a determined attacker — good enough to stop a
 // script from burning the whole Groq quota in one go.
@@ -38,10 +52,8 @@ export default async function handler(request, response) {
         return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    // Only the portfolio itself may call this. Browsers always send Origin on
-    // a cross-origin-capable POST, so a missing Origin means it is not the site.
-    const origin = request.headers.origin;
-    if (!ALLOWED_ORIGINS.includes(origin)) {
+    // Only the portfolio itself may call this.
+    if (!isAllowedOrigin(request.headers.origin, request.headers.host)) {
         return response.status(403).json({ error: 'Forbidden' });
     }
 
