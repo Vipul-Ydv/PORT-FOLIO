@@ -10,6 +10,9 @@
     "keywords": [],
     "author": "Vipul Yadav",
     "license": "ISC",
+    "engines": {
+        "node": "20.x"
+    },
     "devDependencies": {
         "clean-css": "^5.3.3",
         "html-minifier-terser": "^7.2.0",

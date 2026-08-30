@@ -1,64 +1,108 @@
 // api/email.js
-// Securely sends emails using EmailJS REST API without exposing keys.
+// Sends mail through the EmailJS REST API without exposing any key.
+
+const ALLOWED_ORIGINS = [
+    'https://www.vipulydv.me',
+    'https://vipulydv.me',
+    'http://localhost:3000',
+];
+
+const RATE_LIMIT = { windowMs: 10 * 60_000, max: 3 };
+const MAX_FIELD = 5000;
+
+// Per-instance, same caveat as api/chat.js: slows casual abuse, not a
+// determined attacker. Without it this endpoint is an open mail relay.
+const hits = new Map();
+
+function rateLimited(ip) {
+    const now = Date.now();
+    const rec = hits.get(ip);
+    if (!rec || now - rec.start > RATE_LIMIT.windowMs) {
+        hits.set(ip, { start: now, count: 1 });
+        if (hits.size > 5000) hits.clear();
+        return false;
+    }
+    rec.count += 1;
+    return rec.count > RATE_LIMIT.max;
+}
 
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
-        return response.status(405).json({
-            error: 'Method Not Allowed'
-        });
+        return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const {
-        service_id,
-        template_id,
-        template_params
-    } = request.body;
+    if (!ALLOWED_ORIGINS.includes(request.headers.origin)) {
+        return response.status(403).json({ error: 'Forbidden' });
+    }
 
-    // Read secrets from environment variables
+    const ip = (request.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+    if (rateLimited(ip)) {
+        return response.status(429).json({ error: 'Too many messages — try again later.' });
+    }
+
     const publicKey = process.env.EMAILJS_PUBLIC_KEY;
-    // Note: For REST API, we typically need the Private Key if using the full API,
-    // but EmailJS "send" endpoint usually works with Public Key + Service/Template ID if origin is allowed.
-    // HOWEVER, to be truly secure and "server-side", we should use the private key or just proxy the public parameters from env.
-    // The SDK uses the Public Key. The REST API usually requires: service_id, template_id, user_id (public key), template_params.
-
-    // We will pull the IDs from env to verify/override what the client sends, or just use them directly.
-    const envServiceId = process.env.EMAILJS_SERVICE_ID;
-    const envTemplateId = process.env.EMAILJS_TEMPLATE_ID;
-
     const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+    const serviceId = process.env.EMAILJS_SERVICE_ID;
+    const templateId = process.env.EMAILJS_TEMPLATE_ID;
 
-    if (!publicKey || !envServiceId || !envTemplateId || !privateKey) {
-        return response.status(500).json({
-            error: 'Server Misconfiguration: EmailJS keys missing (Private Key required for server-side)'
-        });
+    if (!publicKey || !privateKey || !serviceId || !templateId) {
+        console.error('[email] EmailJS environment variables are incomplete');
+        return response.status(500).json({ error: 'Server Misconfiguration', reason: 'missing_emailjs_config' });
+    }
+
+    let body;
+    try {
+        body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
+    } catch {
+        return response.status(400).json({ error: 'Bad Request', reason: 'invalid_json' });
+    }
+
+    const params = body?.template_params;
+    if (!params || typeof params !== 'object') {
+        return response.status(400).json({ error: 'Bad Request', reason: 'missing_template_params' });
+    }
+
+    // Only forward the fields the template actually uses, capped in length, so
+    // the endpoint cannot be driven as a general-purpose mailer.
+    const template_params = {};
+    for (const key of ['from_name', 'reply_to', 'subject', 'message']) {
+        if (params[key] != null) template_params[key] = String(params[key]).slice(0, MAX_FIELD);
+    }
+    if (!template_params.message) {
+        return response.status(400).json({ error: 'Bad Request', reason: 'empty_message' });
     }
 
     try {
         const emailResp = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                service_id: envServiceId,
-                template_id: envTemplateId,
+                service_id: serviceId,
+                template_id: templateId,
                 user_id: publicKey,
                 accessToken: privateKey,
-                template_params: template_params
-            })
+                template_params,
+            }),
         });
 
         if (!emailResp.ok) {
-            const errorText = await emailResp.text();
-            throw new Error(`EmailJS Error: ${errorText}`);
+            const detail = await emailResp.text();
+            console.error(`[email] EmailJS responded ${emailResp.status}: ${detail}`);
+            return response.status(502).json({
+                error: 'Upstream error',
+                upstream_status: emailResp.status,
+                reason: detail.slice(0, 300),
+            });
         }
 
-        return response.status(200).send('OK');
+        return response.status(200).json({ ok: true });
 
     } catch (error) {
-        console.error('Email Handler Error:', error);
+        console.error('[email] Handler error:', error);
         return response.status(500).json({
-            error: `Failed to send email: ${error.message}`
+            error: 'Internal Server Error',
+            reason: error?.name || 'unknown',
+            detail: String(error?.message || '').slice(0, 200),
         });
     }
 }
