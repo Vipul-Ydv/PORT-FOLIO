@@ -29,6 +29,8 @@ const COPY_AS_IS = [
     'img/hiren-sketch.svg',     // favicon
     'notebook/assets',          // project + profile images used by the pages
     'vipul_res.pdf',            // linked from the contact page
+    'robots.txt',
+    'sitemap.xml',
 ];
 
 // Compiled in this order into one bundle; order matters because each file
