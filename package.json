@@ -14,6 +14,8 @@
         "node": "20.x"
     },
     "devDependencies": {
+        "@babel/core": "^8.0.1",
+        "@babel/preset-react": "^8.0.1",
         "clean-css": "^5.3.3",
         "html-minifier-terser": "^7.2.0",
         "javascript-obfuscator": "^4.1.1",
