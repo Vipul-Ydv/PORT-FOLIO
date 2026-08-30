@@ -1,6 +1,6 @@
 # 🚀 Vipul Yadav — Personal Portfolio
 
-A modern, visually rich personal portfolio website showcasing projects, skills, experience, certifications, and a blog — built with a unique **notebook/hand-drawn aesthetic**. Features an integrated **AI chatbot (HIREN)** powered by Groq's LLaMA model and a secure serverless contact form via EmailJS.
+A modern, visually rich personal portfolio website showcasing projects, skills, experience, certifications, and a blog — built with a unique **notebook/hand-drawn aesthetic**. Features an integrated **AI chatbot (HIREN)** powered by Groq and a secure serverless contact form via EmailJS.
 
 🔗 **Live Site:** [vipulydv.me](https://www.vipulydv.me/)
 
@@ -30,7 +30,7 @@ A modern, visually rich personal portfolio website showcasing projects, skills, 
 - **Frontend:** HTML5, CSS3 (Vanilla), JavaScript (ES6+)
 - **Primary Stack:** MERN — MongoDB, Express, React, Node.js, Next.js
 - **Fonts:** Google Fonts — Inter, Playfair Display, Indie Flower, Permanent Marker, Patrick Hand
-- **AI Chatbot:** Groq API (LLaMA 3.3 70B Versatile)
+- **AI Chatbot:** Groq API (`openai/gpt-oss-120b`)
 - **Email Service:** EmailJS (via REST API)
 - **Serverless Functions:** Vercel Serverless Functions (Node.js)
 - **Build Tools:** Babel (build-time JSX), Terser, HTML Minifier Terser
@@ -93,7 +93,7 @@ PORT-FOLIO/
 3. **Set up environment variables** (create a `.env` file in the root):
    ```env
    GROQ_API_KEY=your_groq_api_key
-   GROQ_MODEL=llama-3.3-70b-versatile   # optional — override if Groq retires the default
+   GROQ_MODEL=openai/gpt-oss-120b       # optional — override if Groq retires the default
    EMAILJS_PUBLIC_KEY=your_emailjs_public_key
    EMAILJS_PRIVATE_KEY=your_emailjs_private_key
    EMAILJS_SERVICE_ID=your_emailjs_service_id
@@ -143,7 +143,7 @@ This project is configured for **Vercel**:
 
 HIREN is an embedded AI chatbot that answers visitor questions about Vipul's skills, projects, and experience. It uses:
 
-- **Model:** LLaMA 3.3 70B Versatile (via Groq)
+- **Model:** `openai/gpt-oss-120b` via Groq (override with `GROQ_MODEL`)
 - **System Prompt:** Pre-loaded with detailed context about Vipul's background
 - **Email Flow:** Built-in guided flow to send emails directly from the chat
 - **Secure:** API key is never exposed to the client — all calls go through `/api/chat.js`

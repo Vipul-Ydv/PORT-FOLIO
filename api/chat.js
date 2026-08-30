@@ -4,10 +4,10 @@
 import { HIREN_SYSTEM_PROMPT } from './_prompt.js';
 
 // Pinned server-side: callers pick the question, never the model.
-// Set GROQ_MODEL in the Vercel dashboard to change it without a deploy —
-// Groq retires model IDs, and a retired one fails every request with
-// "The model ... has been decommissioned".
-const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+// Groq retired the Llama 3.x chat models; llama-3.3-70b-versatile now fails
+// every request with "does not exist or you do not have access to it".
+// Set GROQ_MODEL in the Vercel dashboard to change this without a deploy.
+const MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
 const ALLOWED_ORIGINS = [
     'https://www.vipulydv.me',
@@ -109,7 +109,12 @@ export default async function handler(request, response) {
                 model: MODEL,
                 messages: [{ role: 'system', content: HIREN_SYSTEM_PROMPT }, ...messages],
                 temperature: 0.7,
-                max_tokens: 500,
+                // Newer Groq models expect max_completion_tokens. The budget is
+                // shared with reasoning tokens on gpt-oss, so leave headroom
+                // above the 2-3 sentences HIREN actually replies with.
+                max_completion_tokens: 800,
+                // Only gpt-oss accepts this; sending it elsewhere is a 400.
+                ...(MODEL.includes('gpt-oss') ? { reasoning_effort: 'low' } : {}),
             }),
         });
 
