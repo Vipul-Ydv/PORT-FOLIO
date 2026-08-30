@@ -4,7 +4,10 @@
 import { HIREN_SYSTEM_PROMPT } from './_prompt.js';
 
 // Pinned server-side: callers pick the question, never the model.
-const MODEL = 'llama-3.3-70b-versatile';
+// Set GROQ_MODEL in the Vercel dashboard to change it without a deploy —
+// Groq retires model IDs, and a retired one fails every request with
+// "The model ... has been decommissioned".
+const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
 const ALLOWED_ORIGINS = [
     'https://www.vipulydv.me',
@@ -119,6 +122,7 @@ export default async function handler(request, response) {
             return response.status(502).json({
                 error: 'Upstream error',
                 upstream_status: groqResponse.status,
+                model: MODEL,
                 reason: detail.slice(0, 300),
             });
         }

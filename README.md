@@ -93,6 +93,7 @@ PORT-FOLIO/
 3. **Set up environment variables** (create a `.env` file in the root):
    ```env
    GROQ_API_KEY=your_groq_api_key
+   GROQ_MODEL=llama-3.3-70b-versatile   # optional — override if Groq retires the default
    EMAILJS_PUBLIC_KEY=your_emailjs_public_key
    EMAILJS_PRIVATE_KEY=your_emailjs_private_key
    EMAILJS_SERVICE_ID=your_emailjs_service_id
