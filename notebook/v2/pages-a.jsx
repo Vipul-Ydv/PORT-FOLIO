@@ -14,7 +14,7 @@ const Spread = ({ children, style = {}, id, dashedTop = true }) => (
     ...style,
   }}>
     {/* Center spine */}
-    <div style={{
+    <div className="nb-spine" style={{
       position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1,
       transform: 'translateX(-0.5px)', pointerEvents: 'none',
       background: 'linear-gradient(to bottom, transparent 0, rgba(26,31,46,0.18) 60px, rgba(26,31,46,0.18) calc(100% - 60px), transparent 100%)',
@@ -25,14 +25,14 @@ const Spread = ({ children, style = {}, id, dashedTop = true }) => (
 );
 
 const PageL = ({ children, num, style = {} }) => (
-  <div style={{ position: 'relative', padding: '72px 56px 72px 8vw', ...style }}>
-    {num && <div style={{ position: 'absolute', bottom: 28, left: '8vw', fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.pencil }}>— {num} —</div>}
+  <div className="nb-page-l" style={{ position: 'relative', padding: '72px 56px 72px 8vw', ...style }}>
+    {num && <div data-page-num style={{ position: 'absolute', bottom: 28, left: '8vw', fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.pencil }}>— {num} —</div>}
     {children}
   </div>
 );
 const PageR = ({ children, num, style = {} }) => (
-  <div style={{ position: 'relative', padding: '72px 8vw 72px 56px', ...style }}>
-    {num && <div style={{ position: 'absolute', bottom: 28, right: '8vw', fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.pencil }}>— {num} —</div>}
+  <div className="nb-page-r" style={{ position: 'relative', padding: '72px 8vw 72px 56px', ...style }}>
+    {num && <div data-page-num style={{ position: 'absolute', bottom: 28, right: '8vw', fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.pencil }}>— {num} —</div>}
     {children}
   </div>
 );
@@ -42,7 +42,7 @@ const SpreadLabel = ({ ch, title, kicker }) => (
     <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 12, letterSpacing: '0.18em', color: COL.pencil, textTransform: 'uppercase', marginBottom: 4 }}>
       Ch. {ch}{kicker ? ` · ${kicker}` : ''}
     </div>
-    <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 56, fontWeight: 700, lineHeight: 0.95, margin: 0, color: COL.ink }}>
+    <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 7vw, 56px)', fontWeight: 700, lineHeight: 0.95, margin: 0, color: COL.ink }}>
       {title}
     </h2>
     <Underline w={Math.max(180, title.length * 22)} color={COL.red} thick={3} style={{ marginLeft: 4, marginTop: -2 }} />
@@ -67,7 +67,7 @@ const CoverSpread = ({ onJump, onHiren }) => (
         </div>
         <h1 style={{
           fontFamily: '"Caveat", cursive', fontWeight: 700,
-          fontSize: 132, lineHeight: 0.85, color: COL.ink,
+          fontSize: 'clamp(66px, 13vw, 132px)', lineHeight: 0.85, color: COL.ink,
           margin: 0, letterSpacing: '-0.01em',
         }}>
           Field<br/>Notes<span style={{ color: COL.red }}>.</span>

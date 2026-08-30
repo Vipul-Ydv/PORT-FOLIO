@@ -69,7 +69,7 @@ const ProblemSpread = () => (
       <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 12, letterSpacing: '0.18em', color: COL.pencil, textTransform: 'uppercase', marginBottom: 4 }}>
         receipts · COPREPER · live
       </div>
-      <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 38, lineHeight: 0.95, margin: 0, color: COL.ink }}>
+      <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(30px, 6vw, 38px)', lineHeight: 0.95, margin: 0, color: COL.ink }}>
         what actually happened.
       </h3>
       <Underline w={300} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
@@ -211,7 +211,7 @@ const ReadingSpread = () => {
         <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 12, letterSpacing: '0.18em', color: COL.pencil, textTransform: 'uppercase', marginBottom: 4 }}>
           working notes — public-ish
         </div>
-        <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 38, lineHeight: 0.95, margin: 0, color: COL.ink }}>
+        <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(30px, 6vw, 38px)', lineHeight: 0.95, margin: 0, color: COL.ink }}>
           half-finished thoughts.
         </h3>
         <Underline w={350} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />

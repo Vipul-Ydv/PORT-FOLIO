@@ -60,11 +60,11 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       animation: 'nb-fade .25s',
     }}>
       <div onClick={e => e.stopPropagation()} style={{
-        position: 'relative', width: 580, maxHeight: '82vh',
+        position: 'relative', width: 'min(580px, calc(100vw - 24px))', maxHeight: '82vh',
         background: '#fdfcf6',
         backgroundImage: `repeating-linear-gradient(0deg, transparent 0, transparent 27px, ${COL.pencil}25 27px, ${COL.pencil}25 28px)`,
         boxShadow: '0 30px 80px rgba(40,30,15,0.5), 0 0 0 1px rgba(0,0,0,0.05)',
-        padding: '28px 32px 24px',
+        padding: 'clamp(18px, 4vw, 28px) clamp(16px, 4vw, 32px) 24px',
         transform: 'rotate(-1deg)',
         animation: 'nb-drop .35s cubic-bezier(.2,.9,.3,1.2)',
         display: 'flex', flexDirection: 'column',
@@ -79,7 +79,7 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
         }}>✕ close</button>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 4 }}>
-          <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 52, color: COL.ink, margin: 0, lineHeight: 0.9 }}>
+          <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 9vw, 52px)', color: COL.ink, margin: 0, lineHeight: 0.9 }}>
             HIREN
           </h2>
           <span style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 18, color: COL.pencil }}>
@@ -136,14 +136,18 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
             onKeyDown={e => { if (e.key === 'Enter') ask(query); else if (e.key === 'Escape') onClose(); }}
             placeholder="write your question…"
             style={{
-              flex: 1, background: 'transparent', border: 'none',
-              fontFamily: '"Caveat", cursive', fontSize: 26, color: COL.ink,
+              // minWidth:0 lets the field shrink; without it the flex item
+              // keeps its content width and pushes send past the modal edge.
+              flex: 1, minWidth: 0,
+              background: 'transparent', border: 'none',
+              fontFamily: '"Caveat", cursive', fontSize: 'clamp(20px, 5vw, 26px)', color: COL.ink,
               outline: 'none', borderBottom: `1.5px solid ${COL.pencil}80`, paddingBottom: 4,
             }}
           />
           <button onClick={() => ask(query)} disabled={!query.trim() || busy} style={{
             background: COL.red, color: '#fff', border: 'none',
             fontFamily: '"Caveat", cursive', fontSize: 22, padding: '4px 14px',
+            flexShrink: 0, whiteSpace: 'nowrap',
             cursor: query.trim() && !busy ? 'pointer' : 'not-allowed',
             opacity: query.trim() && !busy ? 1 : 0.4,
           }}>send →</button>

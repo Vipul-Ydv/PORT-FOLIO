@@ -61,7 +61,7 @@ const NotebookV2App = () => {
           <span style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color: COL.ink }}>
             Field Notes<span style={{ color: COL.red }}>.</span> <span style={{ fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil, marginLeft: 6, letterSpacing: '0.1em' }}>by V.YDV</span>
           </span>
-          <nav style={{ display: 'flex', gap: 14, flex: 1, justifyContent: 'center' }}>
+          <nav className="nb-topbar-nav" style={{ display: 'flex', gap: 14, flex: 1, justifyContent: 'center' }}>
             {NAV.map(n => (
               <button key={n.key} onClick={() => jump(n.key)} className={`nb-tab ${active === n.key ? 'is-active' : ''}`}>
                 {n.label}
