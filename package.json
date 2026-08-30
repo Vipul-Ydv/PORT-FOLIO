@@ -10,9 +10,6 @@
     "keywords": [],
     "author": "Vipul Yadav",
     "license": "ISC",
-    "engines": {
-        "node": "20.x"
-    },
     "devDependencies": {
         "@babel/core": "^8.0.1",
         "@babel/preset-react": "^8.0.1",
