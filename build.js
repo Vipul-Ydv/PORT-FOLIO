@@ -1,35 +1,65 @@
 /**
- * Build Script - Minifies & Obfuscates portfolio for production
- * 
- * Your SOURCE CODE (index.html, css/, js/) stays UNTOUCHED.
- * This creates a `dist/` folder with minified versions for deployment.
- * 
+ * Build Script — produces the deployable `public/` folder.
+ *
+ * Everything shipped to the browser is compiled and minified into a single
+ * bundle, so the site is not served as a readable tree of source files.
+ * Nothing is published unless it is named here: the copy list is an
+ * allowlist, not a filter.
+ *
+ * Note: minification is obfuscation, not privacy. Any code the browser runs
+ * can be read by whoever runs it. Secrets belong in the serverless functions
+ * under api/ (which are never copied into public/), not in the page.
+ *
  * Usage: npm run build
  */
 
 import fs from 'fs';
 import path from 'path';
 import { minify as minifyHTML } from 'html-minifier-terser';
-import CleanCSS from 'clean-css';
 import { minify as minifyJS } from 'terser';
-import JavaScriptObfuscator from 'javascript-obfuscator';
+import { transformAsync } from '@babel/core';
+import presetReact from '@babel/preset-react';
 
 const DIST = './public';
-const ROOT = '.';
 
-// Files/folders to copy as-is (images, PDFs, etc.)
-const COPY_AS_IS = ['img', 'api', 'vipul_res.pdf', 'IMG_20260125_124427.jpg', 'notebook'];
+// Static files/folders published as-is. Anything absent from this list is not
+// deployed — dead code and unused assets stay out of the bundle by default.
+const COPY_AS_IS = [
+    'img/portfolio.png',        // og:image
+    'img/hiren-sketch.svg',     // favicon
+    'notebook/assets',          // project + profile images used by the pages
+    'vipul_res.pdf',            // linked from the contact page
+    'robots.txt',
+    'sitemap.xml',
+];
+
+// Compiled in this order into one bundle; order matters because each file
+// hangs its exports off `window` for the next one to read.
+const APP_SOURCES = [
+    'notebook/data.js',
+    'notebook/v2/toc.js',
+    'notebook/scribbles.js',
+    'notebook/hiren.js',
+    'notebook/v2/pages-a.jsx',
+    'notebook/v2/pages-b.jsx',
+    'notebook/v2/pages-c.jsx',
+    'notebook/v2/pages-d.jsx',
+    'notebook/v2/app.jsx',
+];
+
+const BUNDLE_NAME = 'app.min.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
 function ensureDir(dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
 function copyRecursive(src, dest) {
-    if (!fs.existsSync(src)) return;
+    if (!fs.existsSync(src)) {
+        console.warn(`⚠️  Skipped missing asset: ${src}`);
+        return;
+    }
     const stat = fs.statSync(src);
     if (stat.isDirectory()) {
         ensureDir(dest);
@@ -42,13 +72,19 @@ function copyRecursive(src, dest) {
     }
 }
 
+function kb(bytes) {
+    return `${(bytes / 1024).toFixed(1)}kb`;
+}
+
 // ── Anti-DevTools Script (injected into HTML) ────────────────────────
+// Kept from the original build. Worth knowing: this stops nobody who wants
+// the source (View Source, curl and the network tab all still work) and it
+// does block ordinary visitors from copying text or using browser tooling.
+// Bundling above is what actually removes the readable file tree.
 
 const ANTI_DEVTOOLS_SCRIPT = `
 <script>
-// Disable right-click context menu
 document.addEventListener('contextmenu',function(e){e.preventDefault()});
-// Disable common DevTools shortcuts
 document.addEventListener('keydown',function(e){
   if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='u')){e.preventDefault()}
 });
@@ -57,97 +93,95 @@ document.addEventListener('keydown',function(e){
 
 // ── Build Steps ──────────────────────────────────────────────────────
 
+async function buildBundle() {
+    let combined = '';
+    let rawBytes = 0;
+
+    for (const file of APP_SOURCES) {
+        const source = fs.readFileSync(file, 'utf-8');
+        rawBytes += source.length;
+        // JSX is compiled here, once, instead of shipping a 3MB compiler to
+        // every visitor and transpiling on each page load.
+        const { code } = await transformAsync(source, {
+            filename: file,
+            presets: [[presetReact, { runtime: 'classic' }]],
+            babelrc: false,
+            configFile: false,
+            sourceMaps: false,
+        });
+        // Each file gets its own scope: they all declare top-level consts with
+        // the same names (Underline, COL, ...) and communicate through window,
+        // exactly as separate <script> tags did.
+        combined += `\n/* ${file} */\n(function(){\n${code}\n})();\n`;
+    }
+
+    const wrapped = combined;
+
+    const minified = await minifyJS(wrapped, {
+        compress: { passes: 2, drop_console: true },
+        mangle: true,
+        format: { comments: false },
+        sourceMap: false,
+    });
+
+    if (minified.error) throw minified.error;
+
+    ensureDir(path.join(DIST, 'assets'));
+    fs.writeFileSync(path.join(DIST, 'assets', BUNDLE_NAME), minified.code);
+    return { rawBytes, outBytes: minified.code.length };
+}
+
+function rewriteHtml(html) {
+    // Replace the nine source <script> tags (and the Babel CDN load) with the
+    // single compiled bundle. React stays on the CDN.
+    const withoutBabel = html.replace(
+        /\s*<script src="https:\/\/unpkg\.com\/@babel\/standalone[^"]*"><\/script>/,
+        ''
+    );
+    const withoutSources = withoutBabel.replace(
+        /\s*<script(?: type="text\/babel")? src="notebook\/[^"]*"><\/script>/g,
+        ''
+    );
+    return withoutSources.replace(
+        '</body>',
+        `<script src="assets/${BUNDLE_NAME}"></script>\n</body>`
+    );
+}
+
 async function build() {
     console.log('🔨 Building production version...\n');
 
-    // 1. Clean dist folder
-    if (fs.existsSync(DIST)) {
-        fs.rmSync(DIST, { recursive: true });
-    }
+    if (fs.existsSync(DIST)) fs.rmSync(DIST, { recursive: true });
     ensureDir(DIST);
-    console.log('✅ Cleaned dist/ folder');
+    console.log('✅ Cleaned public/');
 
-    // 2. Copy static assets
     for (const item of COPY_AS_IS) {
-        const src = path.join(ROOT, item);
-        const dest = path.join(DIST, item);
-        copyRecursive(src, dest);
+        copyRecursive(item, path.join(DIST, item));
     }
-    console.log('✅ Copied static assets (images, PDFs, API)');
+    console.log(`✅ Copied ${COPY_AS_IS.length} static assets (api/ is deliberately not published)`);
 
-    // 3. Minify CSS
-    ensureDir(path.join(DIST, 'css'));
-    const cssFiles = fs.readdirSync('./css').filter(f => f.endsWith('.css'));
-    for (const file of cssFiles) {
-        const input = fs.readFileSync(path.join('./css', file), 'utf-8');
-        const output = new CleanCSS({
-            level: 2,  // Aggressive optimization
-            sourceMap: false
-        }).minify(input);
-        fs.writeFileSync(path.join(DIST, 'css', file), output.styles);
-        const savings = ((1 - output.styles.length / input.length) * 100).toFixed(1);
-        console.log(`✅ Minified css/${file} (${savings}% smaller)`);
-    }
+    const { rawBytes, outBytes } = await buildBundle();
+    console.log(`✅ Compiled + minified ${APP_SOURCES.length} sources into assets/${BUNDLE_NAME} (${kb(rawBytes)} → ${kb(outBytes)})`);
 
-    // 4. Obfuscate & Minify JS
-    ensureDir(path.join(DIST, 'js'));
-    const jsFiles = fs.readdirSync('./js').filter(f => f.endsWith('.js'));
-    for (const file of jsFiles) {
-        const input = fs.readFileSync(path.join('./js', file), 'utf-8');
-
-        // Step 1: Obfuscate (renames variables, adds dead code)
-        const obfuscated = JavaScriptObfuscator.obfuscate(input, {
-            compact: true,
-            controlFlowFlattening: true,
-            controlFlowFlatteningThreshold: 0.5,
-            deadCodeInjection: true,
-            deadCodeInjectionThreshold: 0.2,
-            stringArray: true,
-            stringArrayEncoding: ['base64'],
-            stringArrayThreshold: 0.75,
-            renameGlobals: false,        // Keep global names to avoid breaking HTML references
-            selfDefending: false,        // Avoid issues with formatting
-            identifierNamesGenerator: 'hexadecimal',
-            sourceMap: false
-        }).getObfuscatedCode();
-
-        // Step 2: Minify the obfuscated code (compress further)
-        const minified = await minifyJS(obfuscated, {
-            compress: true,
-            mangle: true,
-            sourceMap: false
+    for (const page of ['index.html', '404.html']) {
+        const input = fs.readFileSync(page, 'utf-8');
+        const staged = page === 'index.html' ? rewriteHtml(input) : input;
+        const withProtection = staged.replace('</body>', ANTI_DEVTOOLS_SCRIPT + '</body>');
+        const output = await minifyHTML(withProtection, {
+            collapseWhitespace: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+            removeEmptyAttributes: true,
+            minifyCSS: true,
+            minifyJS: true,
+            removeAttributeQuotes: false,
         });
-
-        fs.writeFileSync(path.join(DIST, 'js', file), minified.code);
-        const savings = ((1 - minified.code.length / input.length) * 100).toFixed(1);
-        console.log(`✅ Obfuscated & minified js/${file} (${savings > 0 ? savings + '% smaller' : 'obfuscated'})`);
+        fs.writeFileSync(path.join(DIST, page), output);
+        console.log(`✅ Minified ${page} (${kb(input.length)} → ${kb(output.length)})`);
     }
 
-    // 5. Minify HTML + inject anti-DevTools script
-    const htmlInput = fs.readFileSync('./index.html', 'utf-8');
-
-    // Inject anti-devtools script before closing </body>
-    const htmlWithProtection = htmlInput.replace('</body>', ANTI_DEVTOOLS_SCRIPT + '</body>');
-
-    const htmlOutput = await minifyHTML(htmlWithProtection, {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        removeEmptyAttributes: true,
-        minifyCSS: true,
-        minifyJS: true,
-        removeAttributeQuotes: false
-    });
-
-    fs.writeFileSync(path.join(DIST, 'index.html'), htmlOutput);
-    const htmlSavings = ((1 - htmlOutput.length / htmlInput.length) * 100).toFixed(1);
-    console.log(`✅ Minified index.html (${htmlSavings}% smaller)`);
-    console.log('✅ Injected anti-DevTools protection');
-
-    // 6. Summary
-    console.log('\n🎉 Build complete! Production files are in dist/');
-    console.log('   Deploy the dist/ folder to your hosting provider.');
-    console.log('\n📁 Your original source code is UNTOUCHED.');
+    console.log('\n🎉 Build complete — deploy public/');
+    console.log('   Source files are compiled into one bundle; none are served individually.');
 }
 
 build().catch(err => {

@@ -1,8 +1,8 @@
 # 🚀 Vipul Yadav — Personal Portfolio
 
-A modern, visually rich personal portfolio website showcasing projects, skills, experience, certifications, and a blog — built with a unique **notebook/hand-drawn aesthetic**. Features an integrated **AI chatbot (HIREN)** powered by Groq's LLaMA model and a secure serverless contact form via EmailJS.
+A modern, visually rich personal portfolio website showcasing projects, skills, experience, certifications, and a blog — built with a unique **notebook/hand-drawn aesthetic**. Features an integrated **AI chatbot (HIREN)** powered by Groq and a secure serverless contact form via EmailJS.
 
-🔗 **Live Site:** [vipulyadav.vercel.app](https://vipulyadav.vercel.app/)
+🔗 **Live Site:** [vipulydv.me](https://www.vipulydv.me/)
 
 ---
 
@@ -30,10 +30,10 @@ A modern, visually rich personal portfolio website showcasing projects, skills, 
 - **Frontend:** HTML5, CSS3 (Vanilla), JavaScript (ES6+)
 - **Primary Stack:** MERN — MongoDB, Express, React, Node.js, Next.js
 - **Fonts:** Google Fonts — Inter, Playfair Display, Indie Flower, Permanent Marker, Patrick Hand
-- **AI Chatbot:** Groq API (LLaMA 3.3 70B Versatile)
+- **AI Chatbot:** Groq API (`openai/gpt-oss-120b`)
 - **Email Service:** EmailJS (via REST API)
 - **Serverless Functions:** Vercel Serverless Functions (Node.js)
-- **Build Tools:** Terser, CleanCSS, JavaScript Obfuscator, HTML Minifier Terser
+- **Build Tools:** Babel (build-time JSX), Terser, HTML Minifier Terser
 - **Deployment:** Vercel
 
 ---
@@ -41,24 +41,32 @@ A modern, visually rich personal portfolio website showcasing projects, skills, 
 ## 📁 Project Structure
 
 ```
-PORT-FOLIO-main/
-├── index.html              # Main HTML — all sections (Hero, About, Experience, Projects, Skills, Certificates, Blog, Contact)
-├── css/
-│   ├── styles.css          # Primary stylesheet (notebook aesthetic, responsive design, animations)
-│   └── flyer-styles.css    # Styles for the tear-off contact flyer
-├── js/
-│   ├── main.js             # Core interactions — navigation, scroll reveal, tabs, parallax, lightbox, counters
-│   └── jarvis.js           # HIREN AI chatbot — Groq API integration, email flow, chat UI
+PORT-FOLIO/
+├── index.html              # Page shell — fonts, base styles, responsive rules, script tags
+├── notebook/
+│   ├── data.js             # All site content (identity, projects, skills, certs, contact)
+│   ├── scribbles.js        # Hand-drawn SVG primitives (underlines, tape, arrows)
+│   ├── hiren.js            # HIREN chat modal
+│   ├── assets/             # Project + profile images
+│   └── v2/                 # The Field Notes spreads
+│       ├── toc.js          # Table-of-contents data
+│       ├── app.jsx         # App shell, top nav, scroll spy
+│       └── pages-a..d.jsx  # The six chapter spreads
 ├── api/
-│   ├── chat.js             # Vercel serverless function — proxies Groq API calls (keeps API key secure)
-│   └── email.js            # Vercel serverless function — proxies EmailJS calls (keeps keys secure)
-├── img/                    # Images, icons, certificate screenshots, SVG avatar
-├── build.js                # Production build script — minifies HTML/CSS/JS, obfuscates code, injects anti-DevTools
-├── vercel.json             # Vercel deployment configuration
-├── package.json            # Project metadata and dev dependencies
-├── Resume_vipul_final (1).pdf  # Downloadable resume
-└── .gitignore              # Git ignore rules
+│   ├── chat.js             # Groq proxy for HIREN (key + model + prompt stay server-side)
+│   ├── email.js            # EmailJS proxy
+│   └── _prompt.js          # HIREN's system prompt (never sent to the browser)
+├── img/                    # favicon + og:image
+├── 404.html                # Custom not-found page
+├── robots.txt, sitemap.xml
+├── build.js                # Compiles JSX + minifies into public/
+├── vercel.json             # Deployment config
+└── vipul_res.pdf           # Downloadable resume
 ```
+
+> Files starting with `_` in `api/` are helpers, not routed as functions.
+> `css/` and `js/` are leftovers from the pre-v2 design; nothing references
+> them and they are not deployed.
 
 ---
 
@@ -73,7 +81,7 @@ PORT-FOLIO-main/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/VIPUL-YDV/PORT-FOLIO.git
+   git clone https://github.com/Vipul-Ydv/PORT-FOLIO.git
    cd PORT-FOLIO
    ```
 
@@ -85,6 +93,7 @@ PORT-FOLIO-main/
 3. **Set up environment variables** (create a `.env` file in the root):
    ```env
    GROQ_API_KEY=your_groq_api_key
+   GROQ_MODEL=openai/gpt-oss-120b       # optional — override if Groq retires the default
    EMAILJS_PUBLIC_KEY=your_emailjs_public_key
    EMAILJS_PRIVATE_KEY=your_emailjs_private_key
    EMAILJS_SERVICE_ID=your_emailjs_service_id
@@ -104,14 +113,20 @@ PORT-FOLIO-main/
 npm run build
 ```
 
-This generates an optimized `public/` folder with:
-- Minified HTML, CSS, and JavaScript
-- Obfuscated JS (variable renaming, dead code injection, string encoding)
-- Anti-DevTools script injection (disables right-click and common shortcuts)
+Generates `public/` containing:
 
-> ⚠️ **Note:** Your original source code remains untouched — the build outputs to `public/`.
+- **One compiled bundle** (`assets/app.min.js`) — JSX is transpiled at build
+  time with Babel and minified with Terser, so the browser never downloads a
+  compiler and the site is not served as a tree of readable source files.
+- Minified `index.html` and `404.html`.
+- Only the assets named in `COPY_AS_IS` in `build.js`. The copy list is an
+  **allowlist**: nothing is published unless it is listed. `api/` is
+  deliberately excluded so the serverless sources are not downloadable.
 
----
+> ⚠️ Minification is obscurity, not privacy. Anything the browser runs can be
+> read by whoever runs it — secrets belong in `api/`, never in the page.
+
+> Your original source stays untouched; the build only writes to `public/`.
 
 ## 🌐 Deployment
 
@@ -128,7 +143,7 @@ This project is configured for **Vercel**:
 
 HIREN is an embedded AI chatbot that answers visitor questions about Vipul's skills, projects, and experience. It uses:
 
-- **Model:** LLaMA 3.3 70B Versatile (via Groq)
+- **Model:** `openai/gpt-oss-120b` via Groq (override with `GROQ_MODEL`)
 - **System Prompt:** Pre-loaded with detailed context about Vipul's background
 - **Email Flow:** Built-in guided flow to send emails directly from the chat
 - **Secure:** API key is never exposed to the client — all calls go through `/api/chat.js`
@@ -143,6 +158,6 @@ HIREN is an embedded AI chatbot that answers visitor questions about Vipul's ski
 
 ## 📬 Contact
 
-- **Email:** Vipul.ydv01@gmail.com
-- **GitHub:** [@VIPUL-YDV](https://github.com/VIPUL-YDV)
-- **LinkedIn:** [vipulydvv](https://linkedin.com/in/vipulydvv)
+- **Email:** vipul.ydv01@gmail.com
+- **GitHub:** [@Vipul-Ydv](https://github.com/Vipul-Ydv)
+- **LinkedIn:** [vipul-ydv](https://linkedin.com/in/vipul-ydv)

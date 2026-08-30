@@ -110,7 +110,7 @@ const ProofSpread = ({ focus, setFocus }) => {
         <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 12, letterSpacing: '0.18em', color: COL.pencil, textTransform: 'uppercase', marginBottom: 4 }}>
           where I shipped it
         </div>
-        <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 38, lineHeight: 0.95, margin: 0, color: COL.ink }}>
+        <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(30px, 6vw, 38px)', lineHeight: 0.95, margin: 0, color: COL.ink }}>
           the receipts.
         </h3>
         <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
@@ -217,7 +217,7 @@ const ScrapheapSpread = () => {
         <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 12, letterSpacing: '0.18em', color: COL.pencil, textTransform: 'uppercase', marginBottom: 4 }}>
           paper trail
         </div>
-        <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 38, lineHeight: 0.95, margin: 0, color: COL.ink }}>
+        <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(30px, 6vw, 38px)', lineHeight: 0.95, margin: 0, color: COL.ink }}>
           stamps & wins.
         </h3>
         <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />

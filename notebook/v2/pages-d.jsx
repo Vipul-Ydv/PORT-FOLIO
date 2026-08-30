@@ -8,7 +8,7 @@ const WhatNextSpread = ({ onHiren }) => (
     <PageL num="11">
       <SpreadLabel ch="06" title="what next." kicker="open for summer '26" />
 
-      <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 56, lineHeight: 1, color: COL.ink, margin: '8px 0 6px' }}>
+      <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 8vw, 56px)', lineHeight: 1, color: COL.ink, margin: '8px 0 6px' }}>
         let's <span style={{ color: COL.red }}>talk</span>.
       </h3>
       <Underline w={260} color={COL.red} thick={3} />
@@ -22,6 +22,9 @@ const WhatNextSpread = ({ onHiren }) => (
       <div style={{ marginTop: 18, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
         <a href="mailto:vipul.ydv01@gmail.com" className="nb-btn nb-btn-primary" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
           send email <ArrowWavy w={28} color="#fff" />
+        </a>
+        <a href="vipul_res.pdf" target="_blank" rel="noopener" className="nb-btn" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
+          resume ↓
         </a>
         <button onClick={onHiren} className="nb-btn" style={{ fontSize: 20, padding: '5px 14px', whiteSpace: 'nowrap' }}>
           ask HIREN
@@ -50,7 +53,7 @@ const WhatNextSpread = ({ onHiren }) => (
       <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 12, letterSpacing: '0.18em', color: COL.pencil, textTransform: 'uppercase', marginBottom: 4 }}>
         contact card · pinned
       </div>
-      <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 38, lineHeight: 0.95, margin: 0, color: COL.ink }}>
+      <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(30px, 6vw, 38px)', lineHeight: 0.95, margin: 0, color: COL.ink }}>
         find me here.
       </h3>
       <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />

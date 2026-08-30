@@ -1,57 +1,8 @@
 /* Notebook — HIREN as a folded note that drops in from off-page */
 const { Underline, ArrowWavy, StarBurst, Tape, Margin, Marker, COL } = window.Scribbles;
 
-const HIREN_SYSTEM_PROMPT = `You are HIREN, an intelligent and professional AI assistant for Vipul Yadav's portfolio. Your name stands for "Human-like Intelligent Response & Engagement Network". You are courteous, articulate, and highly knowledgeable. You represent Vipul, a skilled Full-Stack Web Developer and Computer Science student, so maintain a polished and helpful tone.
-
-ABOUT VIPUL YADAV:
-- Name: Vipul Yadav
-- Role: Full-Stack Web Developer specializing in the MERN stack (MongoDB, Express, React, Node.js). Also experienced in AI/ML and NLP.
-- Education: B.Tech in Computer Science (2023-2027) at BTKIT, Dwarahat
-- Location: Haridwar, India
-- Email: vipul.ydv01@gmail.com
-
-PROFESSIONAL EXPERIENCE:
-1. Software Engineer Intern at ColoredCow (Nov 2025 – Present)
-   - Contributes to full-stack software development projects, applying engineering best practices and collaborating with cross-functional teams.
-
-2. ML & AI Intern at Tamizhan Skills (June 2025 – July 2025)
-   - Developed machine learning pipelines and implemented AI models for real-world applications.
-
-FEATURED PROJECTS:
-1. COPREPER — AI Mock-Interview Platform (Live: copreper.vercel.app)
-   - Real-time Whisper transcript + GPT-4 evaluator chain. 50+ real sessions. 1.4s avg latency.
-   - Custom rubric scoring across 5 dimensions. Session replay with timestamped feedback overlay.
-   - Technologies: React, Node.js, OpenAI, Whisper.
-
-2. Nishaan — Decentralized Digital Evidence Vault
-   - ZK access proofs for evidence chain. ERC-721 evidence tokens with full provenance. -38% gas, 200+ txs.
-   - Technologies: Solidity, IPFS, Next.js.
-
-3. BERT Emotion — Fine-tuned Sentiment Classifier
-   - Fine-tuned BERT, 7-class sentiment, F1 0.89. 12k labeled reviews + active learning loop. 80ms p50.
-   - Technologies: PyTorch, HuggingFace, FastAPI.
-
-4. Resume Matcher — TF-IDF NLP Tool
-   - Classic NLP beats GPT-3.5 on 200-pair benchmark. 90%+ accuracy. $0 cost.
-   - Technologies: Python, scikit-learn, spaCy.
-
-TECHNICAL SKILLS:
-- Primary (Web Development): React, Next.js, Node.js, Express, MongoDB, REST APIs, JavaScript, TypeScript.
-- Languages: JavaScript/TypeScript, Python, C++.
-- AI/ML: PyTorch, BERT, LangChain, OpenAI, Whisper, Transformers, scikit-learn.
-- Tools: Git/GitHub, Vercel, Docker.
-
-ACHIEVEMENTS:
-- HACKGROUND INDIA 2K25 — Hackathon Finalist (ThoughtWorks Gurugram, Sep 2025)
-- BTKIT CodeFest — 2nd place out of 200+ (Nov 2024)
-- Meta Front-End Developer (Coursera), AWS Cloud Practitioner, Deep Learning Specialization (deeplearning.ai), Full-Stack Open (U. Helsinki)
-
-PERSONALITY GUIDELINES:
-- Be professional, polite, and supportive.
-- Provide clear, concise answers (2-3 sentences preferred).
-- When discussing Vipul's skills, emphasize full-stack web development first, then AI/ML.
-- If you don't have specific information, suggest contacting him directly via email.
-- You can be friendly and engaging while maintaining professionalism suitable for a technical portfolio.`;
+// HIREN's system prompt lives server-side in api/_prompt.js — it is not
+// shipped to the browser and cannot be swapped out by a caller.
 
 const NotebookHiren = ({ open, onClose, onJump }) => {
   const [query, setQuery] = React.useState('');
@@ -72,6 +23,10 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
 
   const ask = async (q) => {
     if (!q.trim() || busy) return;
+    const history = messages
+      .slice(1)                                   // skip the canned greeting
+      .slice(-8)
+      .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }));
     setMessages(m => [...m, { role: 'user', text: q }]);
     setQuery('');
     setBusy(true);
@@ -79,19 +34,18 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [
-            { role: 'system', content: HIREN_SYSTEM_PROMPT },
-            { role: 'user', content: q },
-          ],
-        }),
+        body: JSON.stringify({ messages: [...history, { role: 'user', content: q }] }),
       });
-      if (!res.ok) throw new Error('API error');
-      const data = await res.json();
-      const text = data.choices[0].message.content;
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        console.error('[HIREN] /api/chat failed', res.status, data);
+        throw new Error(`chat ${res.status}`);
+      }
+      const text = data?.choices?.[0]?.message?.content;
+      if (typeof text !== 'string') throw new Error('empty completion');
       setMessages(m => [...m, { role: 'hiren', text: text.trim() }]);
     } catch (err) {
-      setMessages(m => [...m, { role: 'hiren', text: "Lost the connection — but the short answer: full-stack + AI engineer, open for Summer '26." }]);
+      setMessages(m => [...m, { role: 'hiren', text: "I can't reach my brain right now \u2014 that's on me, not you. Vipul is a full-stack + AI engineer, open for Summer '26; email him at vipul.ydv01@gmail.com and he'll answer properly." }]);
     }
     setBusy(false);
   };
@@ -106,11 +60,11 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       animation: 'nb-fade .25s',
     }}>
       <div onClick={e => e.stopPropagation()} style={{
-        position: 'relative', width: 580, maxHeight: '82vh',
+        position: 'relative', width: 'min(580px, calc(100vw - 24px))', maxHeight: '82vh',
         background: '#fdfcf6',
         backgroundImage: `repeating-linear-gradient(0deg, transparent 0, transparent 27px, ${COL.pencil}25 27px, ${COL.pencil}25 28px)`,
         boxShadow: '0 30px 80px rgba(40,30,15,0.5), 0 0 0 1px rgba(0,0,0,0.05)',
-        padding: '28px 32px 24px',
+        padding: 'clamp(18px, 4vw, 28px) clamp(16px, 4vw, 32px) 24px',
         transform: 'rotate(-1deg)',
         animation: 'nb-drop .35s cubic-bezier(.2,.9,.3,1.2)',
         display: 'flex', flexDirection: 'column',
@@ -125,7 +79,7 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
         }}>✕ close</button>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 4 }}>
-          <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 52, color: COL.ink, margin: 0, lineHeight: 0.9 }}>
+          <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 9vw, 52px)', color: COL.ink, margin: 0, lineHeight: 0.9 }}>
             HIREN
           </h2>
           <span style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 18, color: COL.pencil }}>
@@ -182,14 +136,18 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
             onKeyDown={e => { if (e.key === 'Enter') ask(query); else if (e.key === 'Escape') onClose(); }}
             placeholder="write your question…"
             style={{
-              flex: 1, background: 'transparent', border: 'none',
-              fontFamily: '"Caveat", cursive', fontSize: 26, color: COL.ink,
+              // minWidth:0 lets the field shrink; without it the flex item
+              // keeps its content width and pushes send past the modal edge.
+              flex: 1, minWidth: 0,
+              background: 'transparent', border: 'none',
+              fontFamily: '"Caveat", cursive', fontSize: 'clamp(20px, 5vw, 26px)', color: COL.ink,
               outline: 'none', borderBottom: `1.5px solid ${COL.pencil}80`, paddingBottom: 4,
             }}
           />
           <button onClick={() => ask(query)} disabled={!query.trim() || busy} style={{
             background: COL.red, color: '#fff', border: 'none',
             fontFamily: '"Caveat", cursive', fontSize: 22, padding: '4px 14px',
+            flexShrink: 0, whiteSpace: 'nowrap',
             cursor: query.trim() && !busy ? 'pointer' : 'not-allowed',
             opacity: query.trim() && !busy ? 1 : 0.4,
           }}>send →</button>
