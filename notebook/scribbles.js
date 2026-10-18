@@ -146,9 +146,42 @@ const Marker = ({ children, color = '#fff48a' }) => (
   <span className="nb-a nb-mark" style={{ '--mk': color, padding: '0 2px' }}>{children}</span>
 );
 
+const prefersStill = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Counts a stat like "50+" or "1.4s" up from zero the first time it is seen.
+// Anything that doesn't start with a number is shown as-is.
+const CountUp = ({ value, ms = 1200 }) => {
+  const m = /^(\d+(?:\.\d+)?)(.*)$/.exec(value);
+  const still = !m || prefersStill();
+  const dp = m ? (m[1].split('.')[1] || '').length : 0;
+  const ref = React.useRef(null);
+  const [shown, setShown] = React.useState(still ? value : (0).toFixed(dp) + m[2]);
+
+  React.useEffect(() => {
+    if (still) return;
+    const target = parseFloat(m[1]);
+    let raf;
+    const io = new IntersectionObserver(([en]) => {
+      if (!en.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now();
+      const tick = (t) => {
+        const k = Math.min(1, (t - t0) / ms);
+        setShown((target * (1 - Math.pow(1 - k, 3))).toFixed(dp) + m[2]);
+        if (k < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, { threshold: 0.5 });
+    io.observe(ref.current);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, []);
+
+  return <span ref={ref}>{shown}</span>;
+};
+
 window.Scribbles = {
   Underline, DoubleUnderline, ScribbleCircle,
   ArrowCurved, ArrowWavy, StarBurst, Checkbox,
   Strikethrough, Bracket, TornEdge, Tape, StickyTag,
-  Margin, Marker, COL: { ink, red, blue, pencil },
+  Margin, Marker, CountUp, prefersStill, COL: { ink, red, blue, pencil },
 };

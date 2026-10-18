@@ -1,6 +1,6 @@
 /* Notebook v2 — Spread 02 (the COPREPER problem) + Spread 03 (what I'm reading) */
 const { Underline, ScribbleCircle, ArrowCurved, ArrowWavy, Tape, StickyTag,
-        Margin, Marker, Bracket, COL } = window.Scribbles;
+        Margin, Marker, Bracket, CountUp, COL } = window.Scribbles;
 const { Spread, PageL, PageR, SpreadLabel } = window.NPagesA;
 
 // ───── Ch. 02 · the COPREPER problem ────────────────────────────────────
@@ -114,7 +114,7 @@ const ProblemSpread = () => (
             transform: `rotate(${(i-1) * 0.6}deg)`,
             boxShadow: '2px 2px 0 rgba(0,0,0,0.05)',
           }}>
-            <div style={{ fontFamily: '"Caveat", cursive', fontSize: 38, color: COL.red, lineHeight: 0.9 }}>{s.n}</div>
+            <div style={{ fontFamily: '"Caveat", cursive', fontSize: 38, color: COL.red, lineHeight: 0.9 }}><CountUp value={s.n} /></div>
             <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 14, color: COL.pencil, marginTop: 4 }}>{s.l}</div>
           </div>
         ))}
@@ -194,8 +194,8 @@ const ReadingSpread = () => {
               </div>
               {/* Progress bar */}
               <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ flex: 1, height: 6, background: `${COL.pencil}30`, position: 'relative' }}>
-                  <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${b.progress * 100}%`, background: COL.red }} />
+                <div className="nb-a" style={{ flex: 1, height: 6, background: `${COL.pencil}30`, position: 'relative' }}>
+                  <div className="nb-fill" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, '--w': `${b.progress * 100}%`, '--d': `${0.3 + i * 0.15}s`, background: COL.red }} />
                 </div>
                 <span style={{ fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil }}>
                   {Math.round(b.progress * 100)}%

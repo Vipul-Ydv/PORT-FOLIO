@@ -174,7 +174,12 @@
   .nb-lift { transition: translate .2s, rotate .2s; }
   .nb-lift:hover { translate: 0 -6px; rotate: calc(var(--r, 0deg) * -1); }
 
+  /* Reading progress bars fill up to their --w. */
+  .nb-fill { width: 0; transition: width 1.4s cubic-bezier(.2,.8,.3,1) var(--d, .3s); }
+  [data-in] > .nb-fill { width: var(--w); }
+
   @media (prefers-reduced-motion: reduce) {
+    .nb-fill { transition: none; width: var(--w); }
     .nb-drop:not([data-in]) { opacity: 1; }
     .nb-drop[data-in] { animation: none; }
     .nb-lift, .nb-lift:hover { transition: none; translate: none; rotate: none; }
