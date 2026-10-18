@@ -159,7 +159,7 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{ position: 'absolute', top: -10, left: 18 }}>
                   <Tape w={66} color={e.tape} angle={e.tapeAngle} />
                 </div>
-                <div style={{ position: 'absolute', left: -23, top: 22, width: 12, height: 12, borderRadius: '50%', background: COL.red, border: '3px solid #fdfcf6' }} />
+                <div style={{ position: 'absolute', left: -44, top: 22, width: 12, height: 12, borderRadius: '50%', background: COL.red, border: '3px solid #fdfcf6' }} />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <h4 style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color: COL.ink, margin: 0, lineHeight: 1.1 }}>
