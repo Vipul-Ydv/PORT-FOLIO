@@ -14,12 +14,16 @@ const ProofSpread = ({ focus, setFocus }) => {
         <SpreadLabel ch="04" title="proof I shipped." kicker="selected work" />
 
         {/* Two big polaroids */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, marginTop: 36 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, marginTop: 36, alignItems: 'start' }}>
           {featured.map((p, i) => {
             const open = focus === p.slug;
+            const toggle = () => setFocus(open ? null : p.slug);
             return (
               <div key={p.slug}
-                onClick={() => setFocus(open ? null : p.slug)}
+                onClick={toggle}
+                onKeyDown={e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(); } }}
+                role="button" tabIndex={0} aria-expanded={open}
+                aria-label={`${p.title} — ${open ? 'hide' : 'show'} details`}
                 style={{
                   position: 'relative', background: '#fff', padding: '10px 10px 14px',
                   boxShadow: '0 2px 0 rgba(0,0,0,0.06), 0 8px 18px rgba(40,30,15,0.12)',
@@ -44,6 +48,26 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{ marginTop: 8, fontFamily: '"Caveat", cursive', fontSize: 16, color: COL.red }}>
                   {p.metric}
                 </div>
+                {open ? (
+                  <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px dashed ${COL.pencil}60`, animation: 'nb-fade .25s' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontFamily: '"Patrick Hand", cursive', fontSize: 14, color: COL.ink, lineHeight: 1.4 }}>
+                      {p.bullets.map(b => (
+                        <li key={b} style={{ display: 'flex', gap: 6, marginBottom: 3 }}>
+                          <span style={{ color: COL.red }}>→</span><span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div style={{ marginTop: 6, display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                      {p.stack.map(s => (
+                        <span key={s} style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 12, color: COL.ink, background: '#fff48a', padding: '0 6px' }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: 6, fontFamily: '"Caveat", cursive', fontSize: 15, color: COL.pencil }}>
+                    tap for details ↓
+                  </div>
+                )}
                 {(p.live || p.repo) && (
                   <div style={{ marginTop: 10, display: 'flex', gap: 6, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
                     {p.live && (
