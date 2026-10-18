@@ -181,7 +181,7 @@ const WhyIBuildSpread = () => {
           <div style={{ position: 'absolute', top: -12, left: 24, zIndex: 2 }}>
             <Tape w={64} color="#a3c4f5" angle={-12} />
           </div>
-          <img src="notebook/assets/vipul.jpeg" alt="Vipul" style={{
+          <img src="notebook/assets/vipul.webp" alt="Vipul" width={400} height={496} decoding="async" style={{
             width: '100%', height: 170, objectFit: 'cover', objectPosition: 'center 28%',
             display: 'block', filter: 'contrast(1.04) saturate(0.95)',
           }} />

@@ -95,7 +95,7 @@ const ProblemSpread = () => (
         <div style={{ position: 'absolute', top: -10, right: 30 }}>
           <Tape w={70} color="#a3c4f5" angle={10} />
         </div>
-        <img src="notebook/assets/copreper.png" alt="COPREPER screenshot" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }} />
+        <img src="notebook/assets/copreper.webp" alt="COPREPER screenshot" width={900} height={502} loading="lazy" decoding="async" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }} />
         <div style={{ marginTop: 6, fontFamily: '"Caveat", cursive', fontSize: 17, color: COL.pencil, textAlign: 'center', lineHeight: 1 }}>
           session replay — feedback overlay
         </div>
