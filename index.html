@@ -178,7 +178,14 @@
   .nb-fill { width: 0; transition: width 1.4s cubic-bezier(.2,.8,.3,1) var(--d, .3s); }
   [data-in] > .nb-fill { width: var(--w); }
 
+  /* Timeline dots pop in with a little overshoot. */
+  .nb-pop:not([data-in]) { scale: 0; }
+  .nb-pop[data-in] { animation: nb-pop .5s cubic-bezier(.3,1.6,.5,1) var(--d, .35s) backwards; }
+  @keyframes nb-pop { from { scale: 0; } }
+
   @media (prefers-reduced-motion: reduce) {
+    .nb-pop:not([data-in]) { scale: 1; }
+    .nb-pop[data-in] { animation: none; }
     .nb-fill { transition: none; width: var(--w); }
     .nb-drop:not([data-in]) { opacity: 1; }
     .nb-drop[data-in] { animation: none; }

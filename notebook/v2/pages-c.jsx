@@ -1,11 +1,36 @@
 /* Notebook v2 — Spread 04 (proof I shipped) + Spread 05 (scrapheap) */
-const { Underline, ScribbleCircle, Tape, StickyTag, Margin, Marker, COL } = window.Scribbles;
+const { Underline, ScribbleCircle, Tape, StickyTag, Margin, Marker, prefersStill, COL } = window.Scribbles;
 const { Spread, PageL, PageR, SpreadLabel } = window.NPagesA;
 
 // ───── Ch. 04 · proof I shipped ─────────────────────────────────────────
 const ProofSpread = ({ focus, setFocus }) => {
   const featured = window.ndata.projects.slice(0, 2);
   const minor = window.ndata.projects.slice(2);
+
+  // The dashed timeline line grows with the scroll: empty when its top is 85%
+  // down the screen, fully drawn when its bottom gets there.
+  const lineRef = React.useRef(null);
+  React.useEffect(() => {
+    const el = lineRef.current;
+    if (!el || prefersStill()) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      // offsetHeight, not the bounding box: the box is already scaled.
+      const top = el.getBoundingClientRect().top;
+      const p = (window.innerHeight * 0.85 - top) / el.offsetHeight;
+      el.style.transform = `scaleY(${Math.max(0, Math.min(1, p))})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
     <Spread id="s-proof">
@@ -142,7 +167,7 @@ const ProofSpread = ({ focus, setFocus }) => {
         <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
 
         <div style={{ marginTop: 28, position: 'relative' }}>
-          <div style={{ position: 'absolute', left: 70, top: 14, bottom: 0, width: 0, borderLeft: `2px dashed ${COL.pencil}` }} />
+          <div ref={lineRef} style={{ position: 'absolute', left: 70, top: 14, bottom: 0, width: 0, borderLeft: `2px dashed ${COL.pencil}`, transformOrigin: 'top' }} />
 
           {window.ndata.experience.map((e, i) => (
             <div key={i} style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: 22, marginBottom: 30 }}>
@@ -159,7 +184,7 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{ position: 'absolute', top: -10, left: 18 }}>
                   <Tape w={66} color={e.tape} angle={e.tapeAngle} />
                 </div>
-                <div style={{ position: 'absolute', left: -44, top: 22, width: 12, height: 12, borderRadius: '50%', background: COL.red, border: '3px solid #fdfcf6' }} />
+                <div className="nb-a nb-pop" style={{ position: 'absolute', left: -44, top: 22, width: 12, height: 12, borderRadius: '50%', background: COL.red, border: '3px solid #fdfcf6' }} />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <h4 style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color: COL.ink, margin: 0, lineHeight: 1.1 }}>
