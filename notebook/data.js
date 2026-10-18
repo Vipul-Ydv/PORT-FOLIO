@@ -5,7 +5,7 @@ window.ndata = {
     role: "Full-Stack + AI Engineer",
     pitch: "I ship AI-powered web apps. The rest is noise.",
     sub: "B.Tech CSE · BTKIT '27 · Haridwar, IN",
-    status: "open · SE internship",
+    status: "now · SE intern @ BizBhai",
   },
 
   manifesto: [
@@ -56,7 +56,7 @@ window.ndata = {
       slug: "copreper", title: "COPREPER",
       caption: "AI mock-interview platform. 50+ real sessions.",
       stack: ["react", "node", "openai", "whisper"],
-      angle: -3, polaroid: '#fff8e6', img: 'notebook/assets/copreper.png',
+      angle: -3, polaroid: '#fff8e6', img: 'notebook/assets/copreper.webp',
       bullets: [
         "Real-time Whisper transcript + GPT-4 evaluator chain",
         "Custom rubric scoring across 5 dimensions",
@@ -70,7 +70,7 @@ window.ndata = {
       slug: "nishaan", title: "Nishaan",
       caption: "Decentralized digital evidence vault. Tamper-proof.",
       stack: ["solidity", "ipfs", "next.js"],
-      angle: 2.5, polaroid: '#eef4ff', img: 'notebook/assets/nishaan.png',
+      angle: 2.5, polaroid: '#eef4ff', img: 'notebook/assets/nishaan.webp',
       bullets: [
         "ZK access proofs for evidence chain",
         "ERC-721 evidence tokens with full provenance",
@@ -83,7 +83,7 @@ window.ndata = {
       slug: "bert-emotion", title: "BERT Emotion",
       caption: "Fine-tuned BERT, 7-class sentiment, F1 0.89.",
       stack: ["pytorch", "huggingface", "fastapi"],
-      angle: -1.5, polaroid: '#fff0f0', img: 'notebook/assets/bert-emotion.png',
+      angle: -1.5, polaroid: '#fff0f0', img: 'notebook/assets/bert-emotion.webp',
       bullets: [
         "12k labeled reviews + active learning loop",
         "FastAPI inference, 80ms p50",
@@ -138,14 +138,13 @@ window.ndata = {
     { k: "linkedin", v: "in/vipul-ydv",                        href: "https://linkedin.com/in/vipul-ydv" },
     { k: "x",        v: "@vipulbuilds",                         href: "https://x.com/vipulbuilds" },
     { k: "instagram", v: "@vipul.01_",                          href: "https://instagram.com/vipul.01_" },
-    { k: "site",     v: "vipulydv.me",                          href: "https://vipulydv.me" },
   ],
 
   hirenSuggestions: [
     { label: "Show me COPREPER",                target: "proof" },
     { label: "Jump to experience",              target: "proof" },
     { label: "What's his strongest stack?",     ask: true },
-    { label: "Is he open for internships?",     ask: true },
+    { label: "Where does he work now?",         ask: true },
     { label: "Tell me about Nishaan",           ask: true },
   ],
 };

@@ -1,6 +1,6 @@
 /* Notebook v2 — Spread 02 (the COPREPER problem) + Spread 03 (what I'm reading) */
 const { Underline, ScribbleCircle, ArrowCurved, ArrowWavy, Tape, StickyTag,
-        Margin, Marker, Bracket, COL } = window.Scribbles;
+        Margin, Marker, Bracket, CountUp, COL } = window.Scribbles;
 const { Spread, PageL, PageR, SpreadLabel } = window.NPagesA;
 
 // ───── Ch. 02 · the COPREPER problem ────────────────────────────────────
@@ -83,7 +83,7 @@ const ProblemSpread = () => (
       </div>
 
       {/* Screenshot taped */}
-      <div style={{
+      <div className="nb-a nb-drop" style={{
         position: 'relative', marginTop: 24,
         background: '#fff', padding: '10px 10px 14px',
         boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
@@ -95,7 +95,7 @@ const ProblemSpread = () => (
         <div style={{ position: 'absolute', top: -10, right: 30 }}>
           <Tape w={70} color="#a3c4f5" angle={10} />
         </div>
-        <img src="notebook/assets/copreper.png" alt="COPREPER screenshot" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }} />
+        <img src="notebook/assets/copreper.webp" alt="COPREPER screenshot" width={900} height={502} loading="lazy" decoding="async" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }} />
         <div style={{ marginTop: 6, fontFamily: '"Caveat", cursive', fontSize: 17, color: COL.pencil, textAlign: 'center', lineHeight: 1 }}>
           session replay — feedback overlay
         </div>
@@ -108,13 +108,13 @@ const ProblemSpread = () => (
           { n: '1.4s',  l: 'avg latency' },
           { n: '5',     l: 'rubric dims' },
         ].map((s, i) => (
-          <div key={i} style={{
+          <div key={i} className="nb-a nb-drop" style={{
             background: '#fffcf2', border: `1.5px solid ${COL.ink}25`,
-            padding: '12px 10px', textAlign: 'center',
+            padding: '12px 10px', textAlign: 'center', '--d': `${i * 0.12}s`,
             transform: `rotate(${(i-1) * 0.6}deg)`,
             boxShadow: '2px 2px 0 rgba(0,0,0,0.05)',
           }}>
-            <div style={{ fontFamily: '"Caveat", cursive', fontSize: 38, color: COL.red, lineHeight: 0.9 }}>{s.n}</div>
+            <div style={{ fontFamily: '"Caveat", cursive', fontSize: 38, color: COL.red, lineHeight: 0.9 }}><CountUp value={s.n} /></div>
             <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 14, color: COL.pencil, marginTop: 4 }}>{s.l}</div>
           </div>
         ))}
@@ -156,7 +156,7 @@ const ReadingSpread = () => {
         <SpreadLabel ch="03" title="on the desk" kicker="reading + half-finished thoughts" />
 
         <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 14, color: COL.pencil, marginBottom: 18 }}>
-          updated weekly · last touched 02 May
+          updated now and then
         </div>
 
         {reading.map((b, i) => (
@@ -194,8 +194,8 @@ const ReadingSpread = () => {
               </div>
               {/* Progress bar */}
               <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ flex: 1, height: 6, background: `${COL.pencil}30`, position: 'relative' }}>
-                  <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${b.progress * 100}%`, background: COL.red }} />
+                <div className="nb-a" style={{ flex: 1, height: 6, background: `${COL.pencil}30`, position: 'relative' }}>
+                  <div className="nb-fill" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, '--w': `${b.progress * 100}%`, '--d': `${0.3 + i * 0.15}s`, background: COL.red }} />
                 </div>
                 <span style={{ fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil }}>
                   {Math.round(b.progress * 100)}%
@@ -218,14 +218,16 @@ const ReadingSpread = () => {
 
         <div style={{ marginTop: 24 }}>
           {window.ndata.blog.map((b, i) => (
-            <div key={i} style={{
+            // A post is only a link when it has somewhere to go (b.href).
+            <a key={i} href={b.href} target={b.href ? '_blank' : undefined} rel={b.href ? 'noopener' : undefined} style={{
+              display: 'block', color: 'inherit', textDecoration: 'none',
               padding: '16px 0',
               borderBottom: i < window.ndata.blog.length - 1 ? `1.5px dashed ${COL.pencil}60` : 'none',
-              cursor: 'pointer',
+              cursor: b.href ? 'pointer' : 'default',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil, marginBottom: 4, letterSpacing: '0.05em' }}>
                 <span>{b.date} · {b.read} min</span>
-                <span>↗</span>
+                {b.href && <span>↗</span>}
               </div>
               <h4 style={{ fontFamily: '"Caveat", cursive', fontSize: 26, color: COL.ink, margin: 0, lineHeight: 1.05 }}>
                 {b.title}
@@ -233,7 +235,7 @@ const ReadingSpread = () => {
               <p style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 16, color: COL.pencil, lineHeight: 1.5, margin: '6px 0 0' }}>
                 {b.excerpt}
               </p>
-            </div>
+            </a>
           ))}
         </div>
 

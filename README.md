@@ -54,7 +54,6 @@ PORT-FOLIO/
 │       └── pages-a..d.jsx  # The six chapter spreads
 ├── api/
 │   ├── chat.js             # Groq proxy for HIREN (key + model + prompt stay server-side)
-│   ├── email.js            # EmailJS proxy
 │   └── _prompt.js          # HIREN's system prompt (never sent to the browser)
 ├── img/                    # favicon + og:image
 ├── 404.html                # Custom not-found page
@@ -94,10 +93,6 @@ PORT-FOLIO/
    ```env
    GROQ_API_KEY=your_groq_api_key
    GROQ_MODEL=openai/gpt-oss-120b       # optional — override if Groq retires the default
-   EMAILJS_PUBLIC_KEY=your_emailjs_public_key
-   EMAILJS_PRIVATE_KEY=your_emailjs_private_key
-   EMAILJS_SERVICE_ID=your_emailjs_service_id
-   EMAILJS_TEMPLATE_ID=your_emailjs_template_id
    ```
 
 4. **Run with Vercel CLI** (needed for serverless functions):
@@ -105,7 +100,7 @@ PORT-FOLIO/
    npx vercel dev
    ```
 
-5. **Or simply open `index.html`** in a browser for a static preview (AI chatbot and email features won't work without the serverless backend).
+5. **Or simply open `index.html`** in a browser for a static preview (the AI chatbot won't work without the serverless backend).
 
 ### Production Build
 

@@ -4,9 +4,9 @@ const { Spread, PageL, PageR, SpreadLabel } = window.NPagesA;
 
 const WhatNextSpread = ({ onHiren }) => (
   <Spread id="s-next">
-    {/* LEFT — open for summer '26 */}
+    {/* LEFT — say hi */}
     <PageL num="11">
-      <SpreadLabel ch="06" title="what next." kicker="open for summer '26" />
+      <SpreadLabel ch="06" title="what next." kicker="say hi" />
 
       <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 8vw, 56px)', lineHeight: 1, color: COL.ink, margin: '8px 0 6px' }}>
         let's <span style={{ color: COL.red }}>talk</span>.
@@ -14,9 +14,9 @@ const WhatNextSpread = ({ onHiren }) => (
       <Underline w={260} color={COL.red} thick={3} />
 
       <p style={{ fontFamily: '"Special Elite", monospace', fontSize: 16, color: COL.ink, lineHeight: 1.75, marginTop: 22, maxWidth: 460 }}>
-        Looking for a Summer '26 SE internship — <Marker>remote, hybrid or onsite</Marker>.
-        Strong on full-stack + applied AI. I read DMs, I reply within a day,
-        and I'm not afraid of take-homes.
+        Currently a Software Engineer intern at <Marker>BizBhai</Marker>.
+        Strong on full-stack + applied AI, and always happy to talk shop,
+        side projects or collabs. I read DMs and I reply within a day.
       </p>
 
       <div style={{ marginTop: 18, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -58,7 +58,7 @@ const WhatNextSpread = ({ onHiren }) => (
       </h3>
       <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
 
-      <aside style={{
+      <aside className="nb-a nb-drop" style={{
         marginTop: 32,
         background: '#fff', padding: '22px 24px',
         border: `1.5px solid ${COL.ink}25`,

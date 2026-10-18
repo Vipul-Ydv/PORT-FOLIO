@@ -13,6 +13,7 @@
  * Usage: npm run build
  */
 
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { minify as minifyHTML } from 'html-minifier-terser';
@@ -47,8 +48,6 @@ const APP_SOURCES = [
     'notebook/v2/app.jsx',
 ];
 
-const BUNDLE_NAME = 'app.min.js';
-
 // ── Helpers ──────────────────────────────────────────────────────────
 
 function ensureDir(dir) {
@@ -75,21 +74,6 @@ function copyRecursive(src, dest) {
 function kb(bytes) {
     return `${(bytes / 1024).toFixed(1)}kb`;
 }
-
-// ── Anti-DevTools Script (injected into HTML) ────────────────────────
-// Kept from the original build. Worth knowing: this stops nobody who wants
-// the source (View Source, curl and the network tab all still work) and it
-// does block ordinary visitors from copying text or using browser tooling.
-// Bundling above is what actually removes the readable file tree.
-
-const ANTI_DEVTOOLS_SCRIPT = `
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault()});
-document.addEventListener('keydown',function(e){
-  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='u')){e.preventDefault()}
-});
-</script>
-`;
 
 // ── Build Steps ──────────────────────────────────────────────────────
 
@@ -126,12 +110,17 @@ async function buildBundle() {
 
     if (minified.error) throw minified.error;
 
+    // The content hash in the name lets vercel.json cache the bundle forever:
+    // any change to the code produces a new file name.
+    const hash = crypto.createHash('sha256').update(minified.code).digest('hex').slice(0, 10);
+    const bundleName = `app.${hash}.min.js`;
+
     ensureDir(path.join(DIST, 'assets'));
-    fs.writeFileSync(path.join(DIST, 'assets', BUNDLE_NAME), minified.code);
-    return { rawBytes, outBytes: minified.code.length };
+    fs.writeFileSync(path.join(DIST, 'assets', bundleName), minified.code);
+    return { rawBytes, outBytes: minified.code.length, bundleName };
 }
 
-function rewriteHtml(html) {
+function rewriteHtml(html, bundleName) {
     // Replace the nine source <script> tags (and the Babel CDN load) with the
     // single compiled bundle. React stays on the CDN.
     const withoutBabel = html.replace(
@@ -144,7 +133,7 @@ function rewriteHtml(html) {
     );
     return withoutSources.replace(
         '</body>',
-        `<script src="assets/${BUNDLE_NAME}"></script>\n</body>`
+        `<script src="assets/${bundleName}"></script>\n</body>`
     );
 }
 
@@ -160,14 +149,13 @@ async function build() {
     }
     console.log(`✅ Copied ${COPY_AS_IS.length} static assets (api/ is deliberately not published)`);
 
-    const { rawBytes, outBytes } = await buildBundle();
-    console.log(`✅ Compiled + minified ${APP_SOURCES.length} sources into assets/${BUNDLE_NAME} (${kb(rawBytes)} → ${kb(outBytes)})`);
+    const { rawBytes, outBytes, bundleName } = await buildBundle();
+    console.log(`✅ Compiled + minified ${APP_SOURCES.length} sources into assets/${bundleName} (${kb(rawBytes)} → ${kb(outBytes)})`);
 
     for (const page of ['index.html', '404.html']) {
         const input = fs.readFileSync(page, 'utf-8');
-        const staged = page === 'index.html' ? rewriteHtml(input) : input;
-        const withProtection = staged.replace('</body>', ANTI_DEVTOOLS_SCRIPT + '</body>');
-        const output = await minifyHTML(withProtection, {
+        const staged = page === 'index.html' ? rewriteHtml(input, bundleName) : input;
+        const output = await minifyHTML(staged, {
             collapseWhitespace: true,
             removeComments: true,
             removeRedundantAttributes: true,

@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://www.vipulydv.me/">
 <meta name="twitter:title" content="Vipul Yadav — Field Notes">
-<meta name="twitter:description" content="Full-Stack + AI Engineer. Open for SE internship opportunities.">
+<meta name="twitter:description" content="Full-Stack + AI Engineer. Software Engineer Intern at BizBhai.">
 <meta name="twitter:image" content="https://www.vipulydv.me/img/portfolio.png">
 
 <link rel="canonical" href="https://www.vipulydv.me/">
@@ -128,6 +128,95 @@
   @keyframes nb-blink { 0% { content: '' } 33% { content: '.' } 66% { content: '..' } 100% { content: '...' } }
 
   img, svg { max-width: 100%; }
+
+  /* ── Motion ─────────────────────────────────────────────────────────
+     Anything with .nb-a gets a data-in attribute the first time it scrolls
+     into view (see app.jsx); these rules animate from that. --d delays a
+     single element. Everything is switched off for prefers-reduced-motion
+     at the bottom of this block. */
+
+  /* Ink: scribble paths draw themselves on. pathLength="1" on each path
+     makes the dash maths the same for every length. */
+  .nb-ink { stroke-dasharray: 1 2; stroke-dashoffset: 1; }
+  [data-in] .nb-ink { animation: nb-draw .9s cubic-bezier(.6,.1,.3,1) var(--d, .15s) forwards; }
+  @keyframes nb-draw { to { stroke-dashoffset: 0; } }
+
+  /* Highlighter and strike-through: a background that sweeps left to right,
+     one sweep per line when the text wraps. */
+  .nb-mark, .nb-strike {
+    background-repeat: no-repeat;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    transition: background-size .8s cubic-bezier(.6,.1,.3,1) var(--d, .25s);
+  }
+  .nb-mark {
+    background-image: linear-gradient(var(--mk), var(--mk));
+    background-size: 0% 42%; background-position: 0 86%;
+  }
+  .nb-mark[data-in] { background-size: 100% 42%; }
+  .nb-strike {
+    background-image: linear-gradient(var(--red), var(--red));
+    background-size: 0% 2.4px; background-position: 0 58%;
+  }
+  .nb-strike[data-in] { background-size: 100% 2.4px; }
+
+  /* Photos, polaroids and taped cards fall onto the page and settle. This
+     uses the separate translate/rotate/scale properties, which stack on top
+     of each element's own inline transform: rotate(...) instead of
+     replacing it. */
+  .nb-drop:not([data-in]) { opacity: 0; }
+  .nb-drop[data-in] { animation: nb-settle .75s cubic-bezier(.2,.8,.3,1.1) var(--d, 0s) backwards; }
+  @keyframes nb-settle {
+    0%   { opacity: 0; translate: 0 -28px; rotate: 5deg; scale: 1.04; }
+    60%  { opacity: 1; translate: 0 2px;   rotate: -1.2deg; scale: 1; }
+    100% { translate: 0 0; rotate: 0deg; }
+  }
+  /* Polaroids lift and straighten under the cursor (--r is their tilt). */
+  .nb-lift { transition: translate .2s, rotate .2s; }
+  .nb-lift:hover { translate: 0 -6px; rotate: calc(var(--r, 0deg) * -1); }
+
+  /* Reading progress bars fill up to their --w. */
+  .nb-fill { width: 0; transition: width 1.4s cubic-bezier(.2,.8,.3,1) var(--d, .3s); }
+  [data-in] > .nb-fill { width: var(--w); }
+
+  /* Timeline dots pop in with a little overshoot. */
+  .nb-pop:not([data-in]) { scale: 0; }
+  .nb-pop[data-in] { animation: nb-pop .5s cubic-bezier(.3,1.6,.5,1) var(--d, .35s) backwards; }
+  @keyframes nb-pop { from { scale: 0; } }
+
+  /* Page turn: when a chapter scrolls in, its left page swings down flat
+     from the spine like a page being turned. Two-page layout only — below
+     900px the pages stack and there is no spine to turn around. */
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    .nb-spread { perspective: 2400px; }
+    .nb-turn:not([data-in]) { opacity: 0; }
+    .nb-turn[data-in] {
+      transform-origin: right center;
+      animation: nb-turn .9s cubic-bezier(.25,.7,.3,1) backwards;
+    }
+    @keyframes nb-turn {
+      from { opacity: 0; transform: rotateY(70deg); }
+      45%  { opacity: 1; }
+      to   { transform: none; }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nb-pop:not([data-in]) { scale: 1; }
+    .nb-pop[data-in] { animation: none; }
+    .nb-fill { transition: none; width: var(--w); }
+    .nb-drop:not([data-in]) { opacity: 1; }
+    .nb-drop[data-in] { animation: none; }
+    .nb-lift, .nb-lift:hover { transition: none; translate: none; rotate: none; }
+    .nb-ink { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
+    .nb-mark, .nb-strike { transition: none; }
+    .nb-mark { background-size: 100% 42%; }
+    .nb-strike { background-size: 100% 2.4px; }
+  }
+
+  /* Visible focus for keyboard users only (mouse clicks don't show it). */
+  a:focus-visible, button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: 2px dashed var(--red); outline-offset: 3px;
+  }
 
   /* ── Responsive ─────────────────────────────────────────────────────
      The spreads are laid out with inline styles, so these overrides need

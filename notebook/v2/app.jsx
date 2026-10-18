@@ -38,6 +38,29 @@ const NotebookV2App = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Scroll-triggered motion: every .nb-a element gets data-in the first time
+  // it scrolls into view, and the CSS in index.html animates from there.
+  // Elements rendered later (project details, HIREN) are picked up too.
+  React.useEffect(() => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          en.target.setAttribute('data-in', '');
+          io.unobserve(en.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
+    const watch = (root) => root.querySelectorAll('.nb-a:not([data-in])').forEach(el => io.observe(el));
+    watch(document);
+    const mo = new MutationObserver(muts => muts.forEach(m => m.addedNodes.forEach(n => {
+      if (n.nodeType !== 1) return;
+      if (n.matches('.nb-a:not([data-in])')) io.observe(n);
+      watch(n);
+    })));
+    mo.observe(document.getElementById('root'), { childList: true, subtree: true });
+    return () => { io.disconnect(); mo.disconnect(); };
+  }, []);
+
   React.useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(en => {

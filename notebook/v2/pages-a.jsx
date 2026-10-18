@@ -25,7 +25,7 @@ const Spread = ({ children, style = {}, id, dashedTop = true }) => (
 );
 
 const PageL = ({ children, num, style = {} }) => (
-  <div className="nb-page-l" style={{ position: 'relative', padding: '72px 56px 72px 8vw', ...style }}>
+  <div className="nb-page-l nb-a nb-turn" style={{ position: 'relative', padding: '72px 56px 72px 8vw', ...style }}>
     {num && <div data-page-num style={{ position: 'absolute', bottom: 28, left: '8vw', fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.pencil }}>— {num} —</div>}
     {children}
   </div>
@@ -81,8 +81,8 @@ const CoverSpread = ({ onJump, onHiren }) => (
       </div>
 
       {/* Stamps */}
-      <div style={{ position: 'absolute', bottom: 80, left: 60, display: 'flex', gap: 18 }}>
-        <StickyTag color="#a8d4a8" angle={-3} style={{ fontSize: 18 }}>● open · summer '26</StickyTag>
+      <div className="nb-a nb-drop" style={{ position: 'absolute', bottom: 80, left: 60, display: 'flex', gap: 18, '--d': '.6s' }}>
+        <StickyTag color="#a8d4a8" angle={-3} style={{ fontSize: 18 }}>● now · SE intern @ BizBhai</StickyTag>
         <Margin angle={-4} color={COL.red} style={{ fontSize: 22 }}>← talk to me!</Margin>
       </div>
     </PageL>
@@ -93,7 +93,10 @@ const CoverSpread = ({ onJump, onHiren }) => (
 
       <ol style={{ listStyle: 'none', padding: 0, margin: '6px 0 36px', counterReset: 'toc' }}>
         {window.toc.map((t, i) => (
-          <li key={t.key} onClick={() => onJump(t.key)} style={{
+          <li key={t.key} onClick={() => onJump(t.key)}
+            role="button" tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onJump(t.key); } }}
+            style={{
             cursor: 'pointer', display: 'grid',
             gridTemplateColumns: '36px 1fr 60px',
             gap: 14, alignItems: 'baseline',
@@ -116,12 +119,13 @@ const CoverSpread = ({ onJump, onHiren }) => (
         ))}
       </ol>
 
-      <div style={{
-        marginTop: 8, padding: '14px 16px',
+      <div className="nb-a nb-drop" style={{
+        marginTop: 8, padding: '14px 16px', '--d': '.3s',
         background: '#fff48a', transform: 'rotate(-0.8deg)',
         boxShadow: '2px 3px 0 rgba(0,0,0,0.08)',
         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }} onClick={onHiren}>
+      }} onClick={onHiren} role="button" tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onHiren(); } }}>
         <div>
           <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.ink }}>
             ✎ ask the notebook
@@ -172,7 +176,7 @@ const WhyIBuildSpread = () => {
       {/* RIGHT — bracket-grouped manifesto + photo on top */}
       <PageR num="02" style={{ position: 'relative' }}>
         {/* Tilted photo top right */}
-        <div style={{
+        <div className="nb-a nb-drop" style={{
           position: 'relative', width: 180, height: 220, marginLeft: 'auto', marginBottom: 24,
           transform: 'rotate(4deg)',
           background: '#fff', padding: '8px 8px 32px',
@@ -181,7 +185,7 @@ const WhyIBuildSpread = () => {
           <div style={{ position: 'absolute', top: -12, left: 24, zIndex: 2 }}>
             <Tape w={64} color="#a3c4f5" angle={-12} />
           </div>
-          <img src="notebook/assets/vipul.jpeg" alt="Vipul" style={{
+          <img src="notebook/assets/vipul.webp" alt="Vipul" width={400} height={496} decoding="async" style={{
             width: '100%', height: 170, objectFit: 'cover', objectPosition: 'center 28%',
             display: 'block', filter: 'contrast(1.04) saturate(0.95)',
           }} />
@@ -205,13 +209,10 @@ const WhyIBuildSpread = () => {
                 <span style={{ flexShrink: 0, paddingTop: 4 }}>
                   <Checkbox checked={it.done} s={20} color={COL.ink} />
                 </span>
-                <span style={{
+                <span className={it.done ? 'nb-a nb-strike' : undefined} style={{
                   fontFamily: '"Patrick Hand", cursive', fontSize: 19, lineHeight: 1.4,
                   color: it.done ? COL.ink : COL.pencil,
-                  textDecoration: it.done ? 'line-through' : 'none',
-                  textDecorationColor: COL.red,
-                  textDecorationThickness: '2.4px',
-                  textDecorationSkipInk: 'none',
+                  '--d': `${0.5 + i * 0.15}s`,
                 }}>{it.text}</span>
               </li>
             ))}

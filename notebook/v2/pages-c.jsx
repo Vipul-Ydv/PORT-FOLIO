@@ -1,11 +1,36 @@
 /* Notebook v2 — Spread 04 (proof I shipped) + Spread 05 (scrapheap) */
-const { Underline, ScribbleCircle, Tape, StickyTag, Margin, Marker, COL } = window.Scribbles;
+const { Underline, ScribbleCircle, Tape, StickyTag, Margin, Marker, prefersStill, COL } = window.Scribbles;
 const { Spread, PageL, PageR, SpreadLabel } = window.NPagesA;
 
 // ───── Ch. 04 · proof I shipped ─────────────────────────────────────────
 const ProofSpread = ({ focus, setFocus }) => {
   const featured = window.ndata.projects.slice(0, 2);
   const minor = window.ndata.projects.slice(2);
+
+  // The dashed timeline line grows with the scroll: empty when its top is 85%
+  // down the screen, fully drawn when its bottom gets there.
+  const lineRef = React.useRef(null);
+  React.useEffect(() => {
+    const el = lineRef.current;
+    if (!el || prefersStill()) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      // offsetHeight, not the bounding box: the box is already scaled.
+      const top = el.getBoundingClientRect().top;
+      const p = (window.innerHeight * 0.85 - top) / el.offsetHeight;
+      el.style.transform = `scaleY(${Math.max(0, Math.min(1, p))})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
     <Spread id="s-proof">
@@ -14,17 +39,23 @@ const ProofSpread = ({ focus, setFocus }) => {
         <SpreadLabel ch="04" title="proof I shipped." kicker="selected work" />
 
         {/* Two big polaroids */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, marginTop: 36 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, marginTop: 36, alignItems: 'start' }}>
           {featured.map((p, i) => {
             const open = focus === p.slug;
+            const toggle = () => setFocus(open ? null : p.slug);
             return (
               <div key={p.slug}
-                onClick={() => setFocus(open ? null : p.slug)}
+                onClick={toggle}
+                onKeyDown={e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(); } }}
+                role="button" tabIndex={0} aria-expanded={open}
+                aria-label={`${p.title} — ${open ? 'hide' : 'show'} details`}
+                className="nb-a nb-drop nb-lift"
                 style={{
+                  '--r': `${p.angle}deg`, '--d': `${i * 0.15}s`,
                   position: 'relative', background: '#fff', padding: '10px 10px 14px',
                   boxShadow: '0 2px 0 rgba(0,0,0,0.06), 0 8px 18px rgba(40,30,15,0.12)',
                   transform: `rotate(${p.angle}deg)`,
-                  cursor: 'pointer', transition: 'transform .2s',
+                  cursor: 'pointer',
                   border: open ? `2px solid ${COL.red}` : '1px solid rgba(0,0,0,0.05)',
                 }}>
                 <div style={{ position: 'absolute', top: -10, left: -6 }}>
@@ -33,7 +64,7 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{
                   height: 130, background: p.polaroid, overflow: 'hidden',
                 }}>
-                  {p.img && <img src={p.img} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {p.img && <img src={p.img} alt={p.title} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                 </div>
                 <div style={{ marginTop: 8, fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.ink, lineHeight: 1 }}>
                   {p.title}
@@ -44,6 +75,26 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{ marginTop: 8, fontFamily: '"Caveat", cursive', fontSize: 16, color: COL.red }}>
                   {p.metric}
                 </div>
+                {open ? (
+                  <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px dashed ${COL.pencil}60`, animation: 'nb-fade .25s' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontFamily: '"Patrick Hand", cursive', fontSize: 14, color: COL.ink, lineHeight: 1.4 }}>
+                      {p.bullets.map(b => (
+                        <li key={b} style={{ display: 'flex', gap: 6, marginBottom: 3 }}>
+                          <span style={{ color: COL.red }}>→</span><span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div style={{ marginTop: 6, display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                      {p.stack.map(s => (
+                        <span key={s} style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 12, color: COL.ink, background: '#fff48a', padding: '0 6px' }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: 6, fontFamily: '"Caveat", cursive', fontSize: 15, color: COL.pencil }}>
+                    tap for details ↓
+                  </div>
+                )}
                 {(p.live || p.repo) && (
                   <div style={{ marginTop: 10, display: 'flex', gap: 6, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
                     {p.live && (
@@ -116,14 +167,14 @@ const ProofSpread = ({ focus, setFocus }) => {
         <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
 
         <div style={{ marginTop: 28, position: 'relative' }}>
-          <div style={{ position: 'absolute', left: 70, top: 14, bottom: 0, width: 0, borderLeft: `2px dashed ${COL.pencil}` }} />
+          <div ref={lineRef} style={{ position: 'absolute', left: 70, top: 14, bottom: 0, width: 0, borderLeft: `2px dashed ${COL.pencil}`, transformOrigin: 'top' }} />
 
           {window.ndata.experience.map((e, i) => (
             <div key={i} style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: 22, marginBottom: 30 }}>
               <div style={{ paddingTop: 6, fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.red, textAlign: 'right' }}>
                 {e.date.split(' — ')[0].split(' · ')[0]}
               </div>
-              <div style={{
+              <div className="nb-a nb-drop" style={{
                 position: 'relative', background: '#fffcf2',
                 border: `1.5px solid ${COL.ink}25`,
                 padding: '14px 18px', marginLeft: 16,
@@ -133,7 +184,7 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{ position: 'absolute', top: -10, left: 18 }}>
                   <Tape w={66} color={e.tape} angle={e.tapeAngle} />
                 </div>
-                <div style={{ position: 'absolute', left: -23, top: 22, width: 12, height: 12, borderRadius: '50%', background: COL.red, border: '3px solid #fdfcf6' }} />
+                <div className="nb-a nb-pop" style={{ position: 'absolute', left: -44, top: 22, width: 12, height: 12, borderRadius: '50%', background: COL.red, border: '3px solid #fdfcf6' }} />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <h4 style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color: COL.ink, margin: 0, lineHeight: 1.1 }}>
@@ -166,28 +217,31 @@ const ProofSpread = ({ focus, setFocus }) => {
 };
 
 // ───── Ch. 05 · the scrapheap ───────────────────────────────────────────
+// Defined at module level: declared inside ScrapheapSpread it was a new
+// component type on every render, so React rebuilt its DOM each time the
+// nav highlight changed (and reset its scroll animations).
+const Block = ({ title, items, color, marker, strike, sub }) => (
+  <div>
+    <div style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color, marginBottom: 2, lineHeight: 1 }}>{title}</div>
+    <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 13, color: COL.pencil, marginBottom: 6 }}>{sub}</div>
+    <Underline w={Math.min(180, title.length * 14)} color={color} thick={2} />
+    <ul style={{ listStyle: 'none', padding: 0, margin: '10px 0 0', fontFamily: '"Patrick Hand", cursive', fontSize: 17, color: COL.ink, lineHeight: 1.55 }}>
+      {items.map(it => (
+        <li key={it} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ color: COL.red, fontSize: 16, width: 12 }}>—</span>
+          {marker
+            ? <Marker color="#fff48a">{it}</Marker>
+            : strike
+              ? <span className="nb-a nb-strike" style={{ color: COL.pencil }}>{it}</span>
+              : it}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 const ScrapheapSpread = () => {
   const s = window.ndata.skills;
-
-  const Block = ({ title, items, color, marker, strike, sub }) => (
-    <div>
-      <div style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color, marginBottom: 2, lineHeight: 1 }}>{title}</div>
-      <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 13, color: COL.pencil, marginBottom: 6 }}>{sub}</div>
-      <Underline w={Math.min(180, title.length * 14)} color={color} thick={2} />
-      <ul style={{ listStyle: 'none', padding: 0, margin: '10px 0 0', fontFamily: '"Patrick Hand", cursive', fontSize: 17, color: COL.ink, lineHeight: 1.55 }}>
-        {items.map(it => (
-          <li key={it} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: COL.red, fontSize: 16, width: 12 }}>—</span>
-            {marker
-              ? <Marker color="#fff48a">{it}</Marker>
-              : strike
-                ? <span style={{ color: COL.pencil, textDecoration: 'line-through', textDecorationColor: COL.red, textDecorationThickness: '2px' }}>{it}</span>
-                : it}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 
   return (
     <Spread id="s-scrap">

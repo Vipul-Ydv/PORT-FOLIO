@@ -1,5 +1,23 @@
 /* Notebook — HIREN as a folded note that drops in from off-page */
-const { Underline, ArrowWavy, StarBurst, Tape, Margin, Marker, COL } = window.Scribbles;
+const { Underline, ArrowWavy, StarBurst, Tape, Margin, Marker, prefersStill, COL } = window.Scribbles;
+
+// Writes a reply out letter by letter, in at most ~1.6s however long it is.
+const TypeOut = ({ text, onTick, onDone }) => {
+  const [n, setN] = React.useState(prefersStill() ? text.length : 0);
+  React.useEffect(() => {
+    if (n >= text.length) { onDone(); return; }
+    const t0 = performance.now();
+    const total = Math.min(1600, text.length * 18);
+    const id = setInterval(() => {
+      const k = Math.min(1, (performance.now() - t0) / total);
+      setN(Math.ceil(k * text.length));
+      onTick();
+      if (k === 1) { clearInterval(id); onDone(); }
+    }, 16);
+    return () => clearInterval(id);
+  }, []);
+  return <>{text.slice(0, n)}</>;
+};
 
 // HIREN's system prompt lives server-side in api/_prompt.js — it is not
 // shipped to the browser and cannot be swapped out by a caller.
@@ -7,19 +25,39 @@ const { Underline, ArrowWavy, StarBurst, Tape, Margin, Marker, COL } = window.Sc
 const NotebookHiren = ({ open, onClose, onJump }) => {
   const [query, setQuery] = React.useState('');
   const [messages, setMessages] = React.useState([
-    { role: 'hiren', text: "Hey — I'm HIREN. I'm Vipul's notebook-shaped AI. Ask me anything about him, or pick a shortcut below." },
+    { role: 'hiren', fresh: true, text: "Hey — I'm HIREN. I'm Vipul's notebook-shaped AI. Ask me anything about him, or pick a shortcut below." },
   ]);
   const [busy, setBusy] = React.useState(false);
   const inputRef = React.useRef(null);
   const scrollRef = React.useRef(null);
+  const dialogRef = React.useRef(null);
 
+  // Focus the input on open, and hand focus back to whatever opened HIREN
+  // (the ⌘K button, the sticky note…) on close.
   React.useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 250);
+    if (!open) return;
+    const opener = document.activeElement;
+    const t = setTimeout(() => inputRef.current?.focus(), 250);
+    return () => { clearTimeout(t); opener?.focus?.(); };
   }, [open]);
 
-  React.useEffect(() => {
+  // Keep Tab inside the dialog while it is open.
+  const trapTab = (e) => {
+    if (e.key !== 'Tab' || !dialogRef.current) return;
+    const items = [...dialogRef.current.querySelectorAll('button:not([disabled]), input, a[href]')];
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+
+  const toBottom = () => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages, busy]);
+  };
+  React.useEffect(toBottom, [messages, busy]);
+
+  // A reply is typed out once; after that it renders in full.
+  const settle = (i) => setMessages(ms => ms.map((m, j) => j === i ? { ...m, fresh: false } : m));
 
   const ask = async (q) => {
     if (!q.trim() || busy) return;
@@ -43,9 +81,9 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       }
       const text = data?.choices?.[0]?.message?.content;
       if (typeof text !== 'string') throw new Error('empty completion');
-      setMessages(m => [...m, { role: 'hiren', text: text.trim() }]);
+      setMessages(m => [...m, { role: 'hiren', fresh: true, text: text.trim() }]);
     } catch (err) {
-      setMessages(m => [...m, { role: 'hiren', text: "I can't reach my brain right now \u2014 that's on me, not you. Vipul is a full-stack + AI engineer, open for Summer '26; email him at vipul.ydv01@gmail.com and he'll answer properly." }]);
+      setMessages(m => [...m, { role: 'hiren', fresh: true, text: "I can't reach my brain right now \u2014 that's on me, not you. Vipul is a full-stack + AI engineer, currently an SE intern at BizBhai; email him at vipul.ydv01@gmail.com and he'll answer properly." }]);
     }
     setBusy(false);
   };
@@ -59,7 +97,8 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       animation: 'nb-fade .25s',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div ref={dialogRef} onClick={e => e.stopPropagation()} onKeyDown={trapTab}
+        role="dialog" aria-modal="true" aria-labelledby="hiren-title" style={{
         position: 'relative', width: 'min(580px, calc(100vw - 24px))', maxHeight: '82vh',
         background: '#fdfcf6',
         backgroundImage: `repeating-linear-gradient(0deg, transparent 0, transparent 27px, ${COL.pencil}25 27px, ${COL.pencil}25 28px)`,
@@ -79,7 +118,7 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
         }}>✕ close</button>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 4 }}>
-          <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 9vw, 52px)', color: COL.ink, margin: 0, lineHeight: 0.9 }}>
+          <h2 id="hiren-title" style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 9vw, 52px)', color: COL.ink, margin: 0, lineHeight: 0.9 }}>
             HIREN
           </h2>
           <span style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 18, color: COL.pencil }}>
@@ -101,7 +140,9 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
                 fontFamily: m.role === 'user' ? '"Caveat", cursive' : '"Patrick Hand", cursive',
                 fontSize: m.role === 'user' ? 22 : 19,
                 color: COL.ink, lineHeight: 1.45, paddingLeft: 6,
-              }}>{m.text}</div>
+              }}>{m.fresh
+                ? <TypeOut text={m.text} onTick={toBottom} onDone={() => settle(i)} />
+                : m.text}</div>
             </div>
           ))}
           {busy && (
