@@ -12,10 +12,26 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
   const [busy, setBusy] = React.useState(false);
   const inputRef = React.useRef(null);
   const scrollRef = React.useRef(null);
+  const dialogRef = React.useRef(null);
 
+  // Focus the input on open, and hand focus back to whatever opened HIREN
+  // (the ⌘K button, the sticky note…) on close.
   React.useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 250);
+    if (!open) return;
+    const opener = document.activeElement;
+    const t = setTimeout(() => inputRef.current?.focus(), 250);
+    return () => { clearTimeout(t); opener?.focus?.(); };
   }, [open]);
+
+  // Keep Tab inside the dialog while it is open.
+  const trapTab = (e) => {
+    if (e.key !== 'Tab' || !dialogRef.current) return;
+    const items = [...dialogRef.current.querySelectorAll('button:not([disabled]), input, a[href]')];
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
 
   React.useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -59,7 +75,8 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       animation: 'nb-fade .25s',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div ref={dialogRef} onClick={e => e.stopPropagation()} onKeyDown={trapTab}
+        role="dialog" aria-modal="true" aria-labelledby="hiren-title" style={{
         position: 'relative', width: 'min(580px, calc(100vw - 24px))', maxHeight: '82vh',
         background: '#fdfcf6',
         backgroundImage: `repeating-linear-gradient(0deg, transparent 0, transparent 27px, ${COL.pencil}25 27px, ${COL.pencil}25 28px)`,
@@ -79,7 +96,7 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
         }}>✕ close</button>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 4 }}>
-          <h2 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 9vw, 52px)', color: COL.ink, margin: 0, lineHeight: 0.9 }}>
+          <h2 id="hiren-title" style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(38px, 9vw, 52px)', color: COL.ink, margin: 0, lineHeight: 0.9 }}>
             HIREN
           </h2>
           <span style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 18, color: COL.pencil }}>

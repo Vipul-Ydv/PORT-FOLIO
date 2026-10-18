@@ -129,6 +129,11 @@
 
   img, svg { max-width: 100%; }
 
+  /* Visible focus for keyboard users only (mouse clicks don't show it). */
+  a:focus-visible, button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: 2px dashed var(--red); outline-offset: 3px;
+  }
+
   /* ── Responsive ─────────────────────────────────────────────────────
      The spreads are laid out with inline styles, so these overrides need
      !important to win. Below 900px the two-page spread becomes a single

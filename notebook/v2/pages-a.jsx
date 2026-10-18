@@ -93,7 +93,10 @@ const CoverSpread = ({ onJump, onHiren }) => (
 
       <ol style={{ listStyle: 'none', padding: 0, margin: '6px 0 36px', counterReset: 'toc' }}>
         {window.toc.map((t, i) => (
-          <li key={t.key} onClick={() => onJump(t.key)} style={{
+          <li key={t.key} onClick={() => onJump(t.key)}
+            role="button" tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onJump(t.key); } }}
+            style={{
             cursor: 'pointer', display: 'grid',
             gridTemplateColumns: '36px 1fr 60px',
             gap: 14, alignItems: 'baseline',
@@ -121,7 +124,8 @@ const CoverSpread = ({ onJump, onHiren }) => (
         background: '#fff48a', transform: 'rotate(-0.8deg)',
         boxShadow: '2px 3px 0 rgba(0,0,0,0.08)',
         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }} onClick={onHiren}>
+      }} onClick={onHiren} role="button" tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onHiren(); } }}>
         <div>
           <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.ink }}>
             ✎ ask the notebook
