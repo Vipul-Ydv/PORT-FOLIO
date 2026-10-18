@@ -25,7 +25,7 @@ const Spread = ({ children, style = {}, id, dashedTop = true }) => (
 );
 
 const PageL = ({ children, num, style = {} }) => (
-  <div className="nb-page-l" style={{ position: 'relative', padding: '72px 56px 72px 8vw', ...style }}>
+  <div className="nb-page-l nb-a nb-turn" style={{ position: 'relative', padding: '72px 56px 72px 8vw', ...style }}>
     {num && <div data-page-num style={{ position: 'absolute', bottom: 28, left: '8vw', fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.pencil }}>— {num} —</div>}
     {children}
   </div>

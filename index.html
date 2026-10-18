@@ -183,6 +183,23 @@
   .nb-pop[data-in] { animation: nb-pop .5s cubic-bezier(.3,1.6,.5,1) var(--d, .35s) backwards; }
   @keyframes nb-pop { from { scale: 0; } }
 
+  /* Page turn: when a chapter scrolls in, its left page swings down flat
+     from the spine like a page being turned. Two-page layout only — below
+     900px the pages stack and there is no spine to turn around. */
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    .nb-spread { perspective: 2400px; }
+    .nb-turn:not([data-in]) { opacity: 0; }
+    .nb-turn[data-in] {
+      transform-origin: right center;
+      animation: nb-turn .9s cubic-bezier(.25,.7,.3,1) backwards;
+    }
+    @keyframes nb-turn {
+      from { opacity: 0; transform: rotateY(70deg); }
+      45%  { opacity: 1; }
+      to   { transform: none; }
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .nb-pop:not([data-in]) { scale: 1; }
     .nb-pop[data-in] { animation: none; }
