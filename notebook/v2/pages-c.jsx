@@ -190,28 +190,31 @@ const ProofSpread = ({ focus, setFocus }) => {
 };
 
 // ───── Ch. 05 · the scrapheap ───────────────────────────────────────────
+// Defined at module level: declared inside ScrapheapSpread it was a new
+// component type on every render, so React rebuilt its DOM each time the
+// nav highlight changed (and reset its scroll animations).
+const Block = ({ title, items, color, marker, strike, sub }) => (
+  <div>
+    <div style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color, marginBottom: 2, lineHeight: 1 }}>{title}</div>
+    <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 13, color: COL.pencil, marginBottom: 6 }}>{sub}</div>
+    <Underline w={Math.min(180, title.length * 14)} color={color} thick={2} />
+    <ul style={{ listStyle: 'none', padding: 0, margin: '10px 0 0', fontFamily: '"Patrick Hand", cursive', fontSize: 17, color: COL.ink, lineHeight: 1.55 }}>
+      {items.map(it => (
+        <li key={it} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ color: COL.red, fontSize: 16, width: 12 }}>—</span>
+          {marker
+            ? <Marker color="#fff48a">{it}</Marker>
+            : strike
+              ? <span className="nb-a nb-strike" style={{ color: COL.pencil }}>{it}</span>
+              : it}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 const ScrapheapSpread = () => {
   const s = window.ndata.skills;
-
-  const Block = ({ title, items, color, marker, strike, sub }) => (
-    <div>
-      <div style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color, marginBottom: 2, lineHeight: 1 }}>{title}</div>
-      <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 13, color: COL.pencil, marginBottom: 6 }}>{sub}</div>
-      <Underline w={Math.min(180, title.length * 14)} color={color} thick={2} />
-      <ul style={{ listStyle: 'none', padding: 0, margin: '10px 0 0', fontFamily: '"Patrick Hand", cursive', fontSize: 17, color: COL.ink, lineHeight: 1.55 }}>
-        {items.map(it => (
-          <li key={it} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: COL.red, fontSize: 16, width: 12 }}>—</span>
-            {marker
-              ? <Marker color="#fff48a">{it}</Marker>
-              : strike
-                ? <span className="nb-a nb-strike" style={{ color: COL.pencil }}>{it}</span>
-                : it}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 
   return (
     <Spread id="s-scrap">
