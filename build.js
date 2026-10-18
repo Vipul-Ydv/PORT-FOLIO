@@ -75,21 +75,6 @@ function kb(bytes) {
     return `${(bytes / 1024).toFixed(1)}kb`;
 }
 
-// ── Anti-DevTools Script (injected into HTML) ────────────────────────
-// Kept from the original build. Worth knowing: this stops nobody who wants
-// the source (View Source, curl and the network tab all still work) and it
-// does block ordinary visitors from copying text or using browser tooling.
-// Bundling above is what actually removes the readable file tree.
-
-const ANTI_DEVTOOLS_SCRIPT = `
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault()});
-document.addEventListener('keydown',function(e){
-  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='u')){e.preventDefault()}
-});
-</script>
-`;
-
 // ── Build Steps ──────────────────────────────────────────────────────
 
 async function buildBundle() {
@@ -170,8 +155,7 @@ async function build() {
     for (const page of ['index.html', '404.html']) {
         const input = fs.readFileSync(page, 'utf-8');
         const staged = page === 'index.html' ? rewriteHtml(input, bundleName) : input;
-        const withProtection = staged.replace('</body>', ANTI_DEVTOOLS_SCRIPT + '</body>');
-        const output = await minifyHTML(withProtection, {
+        const output = await minifyHTML(staged, {
             collapseWhitespace: true,
             removeComments: true,
             removeRedundantAttributes: true,
