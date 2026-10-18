@@ -5,7 +5,7 @@ window.ndata = {
     role: "Full-Stack + AI Engineer",
     pitch: "I ship AI-powered web apps. The rest is noise.",
     sub: "B.Tech CSE · BTKIT '27 · Haridwar, IN",
-    status: "open · SE internship",
+    status: "now · SE intern @ BizBhai",
   },
 
   manifesto: [
@@ -138,14 +138,13 @@ window.ndata = {
     { k: "linkedin", v: "in/vipul-ydv",                        href: "https://linkedin.com/in/vipul-ydv" },
     { k: "x",        v: "@vipulbuilds",                         href: "https://x.com/vipulbuilds" },
     { k: "instagram", v: "@vipul.01_",                          href: "https://instagram.com/vipul.01_" },
-    { k: "site",     v: "vipulydv.me",                          href: "https://vipulydv.me" },
   ],
 
   hirenSuggestions: [
     { label: "Show me COPREPER",                target: "proof" },
     { label: "Jump to experience",              target: "proof" },
     { label: "What's his strongest stack?",     ask: true },
-    { label: "Is he open for internships?",     ask: true },
+    { label: "Where does he work now?",         ask: true },
     { label: "Tell me about Nishaan",           ask: true },
   ],
 };

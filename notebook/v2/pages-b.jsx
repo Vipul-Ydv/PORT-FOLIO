@@ -156,7 +156,7 @@ const ReadingSpread = () => {
         <SpreadLabel ch="03" title="on the desk" kicker="reading + half-finished thoughts" />
 
         <div style={{ fontFamily: '"Special Elite", monospace', fontSize: 14, color: COL.pencil, marginBottom: 18 }}>
-          updated weekly · last touched 02 May
+          updated now and then
         </div>
 
         {reading.map((b, i) => (
@@ -218,14 +218,16 @@ const ReadingSpread = () => {
 
         <div style={{ marginTop: 24 }}>
           {window.ndata.blog.map((b, i) => (
-            <div key={i} style={{
+            // A post is only a link when it has somewhere to go (b.href).
+            <a key={i} href={b.href} target={b.href ? '_blank' : undefined} rel={b.href ? 'noopener' : undefined} style={{
+              display: 'block', color: 'inherit', textDecoration: 'none',
               padding: '16px 0',
               borderBottom: i < window.ndata.blog.length - 1 ? `1.5px dashed ${COL.pencil}60` : 'none',
-              cursor: 'pointer',
+              cursor: b.href ? 'pointer' : 'default',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil, marginBottom: 4, letterSpacing: '0.05em' }}>
                 <span>{b.date} · {b.read} min</span>
-                <span>↗</span>
+                {b.href && <span>↗</span>}
               </div>
               <h4 style={{ fontFamily: '"Caveat", cursive', fontSize: 26, color: COL.ink, margin: 0, lineHeight: 1.05 }}>
                 {b.title}
@@ -233,7 +235,7 @@ const ReadingSpread = () => {
               <p style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 16, color: COL.pencil, lineHeight: 1.5, margin: '6px 0 0' }}>
                 {b.excerpt}
               </p>
-            </div>
+            </a>
           ))}
         </div>
 

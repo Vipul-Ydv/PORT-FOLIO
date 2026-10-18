@@ -45,7 +45,7 @@ const NotebookHiren = ({ open, onClose, onJump }) => {
       if (typeof text !== 'string') throw new Error('empty completion');
       setMessages(m => [...m, { role: 'hiren', text: text.trim() }]);
     } catch (err) {
-      setMessages(m => [...m, { role: 'hiren', text: "I can't reach my brain right now \u2014 that's on me, not you. Vipul is a full-stack + AI engineer, open for Summer '26; email him at vipul.ydv01@gmail.com and he'll answer properly." }]);
+      setMessages(m => [...m, { role: 'hiren', text: "I can't reach my brain right now \u2014 that's on me, not you. Vipul is a full-stack + AI engineer, currently an SE intern at BizBhai; email him at vipul.ydv01@gmail.com and he'll answer properly." }]);
     }
     setBusy(false);
   };
