@@ -13,10 +13,12 @@ ABOUT VIPUL YADAV:
 - Email: vipul.ydv01@gmail.com
 
 PROFESSIONAL EXPERIENCE:
-1. Software Engineer Intern at ColoredCow (Nov 2025 - Present)
-   - Contributes to full-stack software development projects, applying engineering best practices and collaborating with cross-functional teams.
+1. Software Engineer Intern at BizBhai (Sep 2026 - Present)
 
-2. ML & AI Intern at Tamizhan Skills (June 2025 - July 2025)
+2. Software Engineer Intern at ColoredCow (Nov 2025 - Sep 2026)
+   - Contributed to full-stack software development projects, applying engineering best practices and collaborating with cross-functional teams.
+
+3. ML & AI Intern at Tamizhan Skills (June 2025 - July 2025)
    - Developed machine learning pipelines and implemented AI models for real-world applications.
 
 FEATURED PROJECTS:

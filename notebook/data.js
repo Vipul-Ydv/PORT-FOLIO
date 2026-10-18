@@ -18,14 +18,22 @@ window.ndata = {
 
   experience: [
     {
+      co: "BizBhai",
+      role: "Software Engineer Intern",
+      date: "Sep 2026 — present",
+      tape: '#9ec5e8', tapeAngle: 2,
+      bullets: [],
+      tags: [],
+    },
+    {
       co: "ColoredCow",
       role: "Software Engineer Intern",
-      date: "Nov 2025 — present",
+      date: "Nov 2025 — Sep 2026",
       tape: '#a8d4a8', tapeAngle: -3,
       bullets: [
         "Production WordPress + React on real client work",
         "First PR merged in week 2",
-        "Pairing daily with senior engineers on REST integrations",
+        "Paired daily with senior engineers on REST integrations",
       ],
       tags: ["react", "wordpress", "rest"],
     },
