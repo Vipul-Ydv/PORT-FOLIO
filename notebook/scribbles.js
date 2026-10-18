@@ -6,22 +6,22 @@ const blue = '#2a4a8a';
 const pencil = '#5a6070';
 
 const Underline = ({ w = 200, color = red, thick = 2.4, style = {} }) => (
-  <svg width={w} height="14" viewBox={`0 0 ${w} 14`} style={{ display: 'block', overflow: 'visible', ...style }}>
-    <path d={`M 4 8 Q ${w*0.15} 4 ${w*0.3} 7 T ${w*0.6} 8 T ${w*0.85} 6 T ${w-4} 9`}
+  <svg className="nb-a" width={w} height="14" viewBox={`0 0 ${w} 14`} style={{ display: 'block', overflow: 'visible', ...style }}>
+    <path className="nb-ink" pathLength="1" d={`M 4 8 Q ${w*0.15} 4 ${w*0.3} 7 T ${w*0.6} 8 T ${w*0.85} 6 T ${w-4} 9`}
       fill="none" stroke={color} strokeWidth={thick} strokeLinecap="round" />
   </svg>
 );
 
 const DoubleUnderline = ({ w = 200, color = red, style = {} }) => (
-  <svg width={w} height="16" viewBox={`0 0 ${w} 16`} style={{ display: 'block', overflow: 'visible', ...style }}>
-    <path d={`M 4 6 Q ${w*0.2} 3 ${w*0.45} 5 T ${w-4} 7`} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
-    <path d={`M 6 11 Q ${w*0.25} 8 ${w*0.5} 10 T ${w-6} 12`} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+  <svg className="nb-a" width={w} height="16" viewBox={`0 0 ${w} 16`} style={{ display: 'block', overflow: 'visible', ...style }}>
+    <path className="nb-ink" pathLength="1" d={`M 4 6 Q ${w*0.2} 3 ${w*0.45} 5 T ${w-4} 7`} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+    <path className="nb-ink" pathLength="1" style={{ '--d': '.55s' }} d={`M 6 11 Q ${w*0.25} 8 ${w*0.5} 10 T ${w-6} 12`} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
   </svg>
 );
 
 const ScribbleCircle = ({ w = 120, h = 50, color = red, style = {} }) => (
-  <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ display: 'block', overflow: 'visible', ...style }}>
-    <path d={`M ${w*0.95} ${h*0.5}
+  <svg className="nb-a" width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ display: 'block', overflow: 'visible', ...style }}>
+    <path className="nb-ink" pathLength="1" d={`M ${w*0.95} ${h*0.5}
               C ${w*0.95} ${h*0.15}, ${w*0.6} ${h*0.05}, ${w*0.45} ${h*0.08}
               S ${w*0.05} ${h*0.3},  ${w*0.06} ${h*0.55}
               S ${w*0.3} ${h*0.95}, ${w*0.55} ${h*0.92}
@@ -32,21 +32,21 @@ const ScribbleCircle = ({ w = 120, h = 50, color = red, style = {} }) => (
 );
 
 const ArrowCurved = ({ w = 100, h = 80, color = red, flip = false, style = {} }) => (
-  <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ display: 'block', overflow: 'visible', transform: flip ? 'scaleX(-1)' : 'none', ...style }}>
-    <path d={`M ${w*0.1} ${h*0.15}
+  <svg className="nb-a" width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ display: 'block', overflow: 'visible', transform: flip ? 'scaleX(-1)' : 'none', ...style }}>
+    <path className="nb-ink" pathLength="1" d={`M ${w*0.1} ${h*0.15}
               Q ${w*0.5} ${h*0.05}, ${w*0.65} ${h*0.5}
               T ${w*0.85} ${h*0.85}`}
       fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <path d={`M ${w*0.85} ${h*0.85} L ${w*0.7} ${h*0.78} M ${w*0.85} ${h*0.85} L ${w*0.78} ${h*0.66}`}
+    <path className="nb-ink" pathLength="1" style={{ '--d': '.9s' }} d={`M ${w*0.85} ${h*0.85} L ${w*0.7} ${h*0.78} M ${w*0.85} ${h*0.85} L ${w*0.78} ${h*0.66}`}
       fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
 const ArrowWavy = ({ w = 80, color = red, style = {} }) => (
-  <svg width={w} height="22" viewBox={`0 0 ${w} 22`} style={{ display: 'inline-block', verticalAlign: 'middle', overflow: 'visible', ...style }}>
-    <path d={`M 4 11 Q ${w*0.2} 4, ${w*0.4} 11 T ${w*0.75} 11 L ${w-8} 11`}
+  <svg className="nb-a" width={w} height="22" viewBox={`0 0 ${w} 22`} style={{ display: 'inline-block', verticalAlign: 'middle', overflow: 'visible', ...style }}>
+    <path className="nb-ink" pathLength="1" d={`M 4 11 Q ${w*0.2} 4, ${w*0.4} 11 T ${w*0.75} 11 L ${w-8} 11`}
       fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <path d={`M ${w-8} 11 L ${w-16} 5 M ${w-8} 11 L ${w-16} 17`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    <path className="nb-ink" pathLength="1" style={{ '--d': '.9s' }} d={`M ${w-8} 11 L ${w-16} 5 M ${w-8} 11 L ${w-16} 17`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
@@ -62,17 +62,17 @@ const StarBurst = ({ s = 30, color = red, style = {} }) => (
 );
 
 const Checkbox = ({ checked = false, s = 18, color = ink, style = {} }) => (
-  <svg width={s} height={s} viewBox="0 0 20 20" style={{ display: 'inline-block', verticalAlign: '-3px', overflow: 'visible', ...style }}>
+  <svg className="nb-a" width={s} height={s} viewBox="0 0 20 20" style={{ display: 'inline-block', verticalAlign: '-3px', overflow: 'visible', ...style }}>
     <path d="M 2 3 L 17 2 L 18 16 L 3 17 Z" fill="none" stroke={color} strokeWidth="1.6" strokeLinejoin="round" />
     {checked && (
-      <path d="M 5 9 L 9 13 L 16 4" fill="none" stroke={red} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path className="nb-ink" pathLength="1" style={{ '--d': '.35s' }} d="M 5 9 L 9 13 L 16 4" fill="none" stroke={red} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     )}
   </svg>
 );
 
 const Strikethrough = ({ w = 100, color = red, style = {} }) => (
-  <svg width={w} height="6" viewBox={`0 0 ${w} 6`} style={{ display: 'block', position: 'absolute', left: 0, top: '50%', transform: 'translateY(-2px)', overflow: 'visible', ...style }}>
-    <path d={`M 2 3 Q ${w*0.3} 1, ${w*0.5} 3 T ${w-2} 3`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
+  <svg className="nb-a" width={w} height="6" viewBox={`0 0 ${w} 6`} style={{ display: 'block', position: 'absolute', left: 0, top: '50%', transform: 'translateY(-2px)', overflow: 'visible', ...style }}>
+    <path className="nb-ink" pathLength="1" d={`M 2 3 Q ${w*0.3} 1, ${w*0.5} 3 T ${w-2} 3`} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
@@ -82,8 +82,8 @@ const Bracket = ({ h = 100, side = 'left', color = ink, style = {} }) => {
     ? `M ${w-2} 3 Q 2 4, 3 ${h*0.5} T ${w-2} ${h-3}`
     : `M 3 3 Q ${w-2} 4, ${w-3} ${h*0.5} T 3 ${h-3}`;
   return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ overflow: 'visible', ...style }}>
-      <path d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    <svg className="nb-a" width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ overflow: 'visible', ...style }}>
+      <path className="nb-ink" pathLength="1" d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 };
@@ -141,11 +141,9 @@ const Margin = ({ children, angle = -3, color = red, style = {} }) => (
   }}>{children}</div>
 );
 
+// The highlight is a background that sweeps in (see .nb-mark in index.html).
 const Marker = ({ children, color = '#fff48a' }) => (
-  <span style={{
-    background: `linear-gradient(180deg, transparent 50%, ${color} 50%, ${color} 92%, transparent 92%)`,
-    padding: '0 2px',
-  }}>{children}</span>
+  <span className="nb-a nb-mark" style={{ '--mk': color, padding: '0 2px' }}>{children}</span>
 );
 
 window.Scribbles = {

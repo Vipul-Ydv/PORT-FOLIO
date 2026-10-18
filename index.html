@@ -129,6 +129,43 @@
 
   img, svg { max-width: 100%; }
 
+  /* ── Motion ─────────────────────────────────────────────────────────
+     Anything with .nb-a gets a data-in attribute the first time it scrolls
+     into view (see app.jsx); these rules animate from that. --d delays a
+     single element. Everything is switched off for prefers-reduced-motion
+     at the bottom of this block. */
+
+  /* Ink: scribble paths draw themselves on. pathLength="1" on each path
+     makes the dash maths the same for every length. */
+  .nb-ink { stroke-dasharray: 1 2; stroke-dashoffset: 1; }
+  [data-in] .nb-ink { animation: nb-draw .9s cubic-bezier(.6,.1,.3,1) var(--d, .15s) forwards; }
+  @keyframes nb-draw { to { stroke-dashoffset: 0; } }
+
+  /* Highlighter and strike-through: a background that sweeps left to right,
+     one sweep per line when the text wraps. */
+  .nb-mark, .nb-strike {
+    background-repeat: no-repeat;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    transition: background-size .8s cubic-bezier(.6,.1,.3,1) var(--d, .25s);
+  }
+  .nb-mark {
+    background-image: linear-gradient(var(--mk), var(--mk));
+    background-size: 0% 42%; background-position: 0 86%;
+  }
+  .nb-mark[data-in] { background-size: 100% 42%; }
+  .nb-strike {
+    background-image: linear-gradient(var(--red), var(--red));
+    background-size: 0% 2.4px; background-position: 0 58%;
+  }
+  .nb-strike[data-in] { background-size: 100% 2.4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nb-ink { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
+    .nb-mark, .nb-strike { transition: none; }
+    .nb-mark { background-size: 100% 42%; }
+    .nb-strike { background-size: 100% 2.4px; }
+  }
+
   /* Visible focus for keyboard users only (mouse clicks don't show it). */
   a:focus-visible, button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
     outline: 2px dashed var(--red); outline-offset: 3px;

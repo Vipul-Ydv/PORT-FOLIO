@@ -209,13 +209,10 @@ const WhyIBuildSpread = () => {
                 <span style={{ flexShrink: 0, paddingTop: 4 }}>
                   <Checkbox checked={it.done} s={20} color={COL.ink} />
                 </span>
-                <span style={{
+                <span className={it.done ? 'nb-a nb-strike' : undefined} style={{
                   fontFamily: '"Patrick Hand", cursive', fontSize: 19, lineHeight: 1.4,
                   color: it.done ? COL.ink : COL.pencil,
-                  textDecoration: it.done ? 'line-through' : 'none',
-                  textDecorationColor: COL.red,
-                  textDecorationThickness: '2.4px',
-                  textDecorationSkipInk: 'none',
+                  '--d': `${0.5 + i * 0.15}s`,
                 }}>{it.text}</span>
               </li>
             ))}

@@ -205,7 +205,7 @@ const ScrapheapSpread = () => {
             {marker
               ? <Marker color="#fff48a">{it}</Marker>
               : strike
-                ? <span style={{ color: COL.pencil, textDecoration: 'line-through', textDecorationColor: COL.red, textDecorationThickness: '2px' }}>{it}</span>
+                ? <span className="nb-a nb-strike" style={{ color: COL.pencil }}>{it}</span>
                 : it}
           </li>
         ))}
