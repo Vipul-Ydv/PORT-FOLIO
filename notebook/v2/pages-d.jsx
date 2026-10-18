@@ -58,7 +58,7 @@ const WhatNextSpread = ({ onHiren }) => (
       </h3>
       <Underline w={260} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
 
-      <aside style={{
+      <aside className="nb-a nb-drop" style={{
         marginTop: 32,
         background: '#fff', padding: '22px 24px',
         border: `1.5px solid ${COL.ink}25`,

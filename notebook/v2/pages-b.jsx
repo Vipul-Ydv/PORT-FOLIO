@@ -83,7 +83,7 @@ const ProblemSpread = () => (
       </div>
 
       {/* Screenshot taped */}
-      <div style={{
+      <div className="nb-a nb-drop" style={{
         position: 'relative', marginTop: 24,
         background: '#fff', padding: '10px 10px 14px',
         boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
@@ -108,9 +108,9 @@ const ProblemSpread = () => (
           { n: '1.4s',  l: 'avg latency' },
           { n: '5',     l: 'rubric dims' },
         ].map((s, i) => (
-          <div key={i} style={{
+          <div key={i} className="nb-a nb-drop" style={{
             background: '#fffcf2', border: `1.5px solid ${COL.ink}25`,
-            padding: '12px 10px', textAlign: 'center',
+            padding: '12px 10px', textAlign: 'center', '--d': `${i * 0.12}s`,
             transform: `rotate(${(i-1) * 0.6}deg)`,
             boxShadow: '2px 2px 0 rgba(0,0,0,0.05)',
           }}>

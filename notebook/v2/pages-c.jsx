@@ -24,11 +24,13 @@ const ProofSpread = ({ focus, setFocus }) => {
                 onKeyDown={e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(); } }}
                 role="button" tabIndex={0} aria-expanded={open}
                 aria-label={`${p.title} — ${open ? 'hide' : 'show'} details`}
+                className="nb-a nb-drop nb-lift"
                 style={{
+                  '--r': `${p.angle}deg`, '--d': `${i * 0.15}s`,
                   position: 'relative', background: '#fff', padding: '10px 10px 14px',
                   boxShadow: '0 2px 0 rgba(0,0,0,0.06), 0 8px 18px rgba(40,30,15,0.12)',
                   transform: `rotate(${p.angle}deg)`,
-                  cursor: 'pointer', transition: 'transform .2s',
+                  cursor: 'pointer',
                   border: open ? `2px solid ${COL.red}` : '1px solid rgba(0,0,0,0.05)',
                 }}>
                 <div style={{ position: 'absolute', top: -10, left: -6 }}>
@@ -147,7 +149,7 @@ const ProofSpread = ({ focus, setFocus }) => {
               <div style={{ paddingTop: 6, fontFamily: '"Caveat", cursive', fontSize: 18, color: COL.red, textAlign: 'right' }}>
                 {e.date.split(' — ')[0].split(' · ')[0]}
               </div>
-              <div style={{
+              <div className="nb-a nb-drop" style={{
                 position: 'relative', background: '#fffcf2',
                 border: `1.5px solid ${COL.ink}25`,
                 padding: '14px 18px', marginLeft: 16,

@@ -159,7 +159,25 @@
   }
   .nb-strike[data-in] { background-size: 100% 2.4px; }
 
+  /* Photos, polaroids and taped cards fall onto the page and settle. This
+     uses the separate translate/rotate/scale properties, which stack on top
+     of each element's own inline transform: rotate(...) instead of
+     replacing it. */
+  .nb-drop:not([data-in]) { opacity: 0; }
+  .nb-drop[data-in] { animation: nb-settle .75s cubic-bezier(.2,.8,.3,1.1) var(--d, 0s) backwards; }
+  @keyframes nb-settle {
+    0%   { opacity: 0; translate: 0 -28px; rotate: 5deg; scale: 1.04; }
+    60%  { opacity: 1; translate: 0 2px;   rotate: -1.2deg; scale: 1; }
+    100% { translate: 0 0; rotate: 0deg; }
+  }
+  /* Polaroids lift and straighten under the cursor (--r is their tilt). */
+  .nb-lift { transition: translate .2s, rotate .2s; }
+  .nb-lift:hover { translate: 0 -6px; rotate: calc(var(--r, 0deg) * -1); }
+
   @media (prefers-reduced-motion: reduce) {
+    .nb-drop:not([data-in]) { opacity: 1; }
+    .nb-drop[data-in] { animation: none; }
+    .nb-lift, .nb-lift:hover { transition: none; translate: none; rotate: none; }
     .nb-ink { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
     .nb-mark, .nb-strike { transition: none; }
     .nb-mark { background-size: 100% 42%; }

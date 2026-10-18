@@ -81,7 +81,7 @@ const CoverSpread = ({ onJump, onHiren }) => (
       </div>
 
       {/* Stamps */}
-      <div style={{ position: 'absolute', bottom: 80, left: 60, display: 'flex', gap: 18 }}>
+      <div className="nb-a nb-drop" style={{ position: 'absolute', bottom: 80, left: 60, display: 'flex', gap: 18, '--d': '.6s' }}>
         <StickyTag color="#a8d4a8" angle={-3} style={{ fontSize: 18 }}>● now · SE intern @ BizBhai</StickyTag>
         <Margin angle={-4} color={COL.red} style={{ fontSize: 22 }}>← talk to me!</Margin>
       </div>
@@ -119,8 +119,8 @@ const CoverSpread = ({ onJump, onHiren }) => (
         ))}
       </ol>
 
-      <div style={{
-        marginTop: 8, padding: '14px 16px',
+      <div className="nb-a nb-drop" style={{
+        marginTop: 8, padding: '14px 16px', '--d': '.3s',
         background: '#fff48a', transform: 'rotate(-0.8deg)',
         boxShadow: '2px 3px 0 rgba(0,0,0,0.08)',
         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -176,7 +176,7 @@ const WhyIBuildSpread = () => {
       {/* RIGHT — bracket-grouped manifesto + photo on top */}
       <PageR num="02" style={{ position: 'relative' }}>
         {/* Tilted photo top right */}
-        <div style={{
+        <div className="nb-a nb-drop" style={{
           position: 'relative', width: 180, height: 220, marginLeft: 'auto', marginBottom: 24,
           transform: 'rotate(4deg)',
           background: '#fff', padding: '8px 8px 32px',
