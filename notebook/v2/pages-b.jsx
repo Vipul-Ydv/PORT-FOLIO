@@ -11,14 +11,14 @@ const ProblemSpread = () => (
       <SpreadLabel ch="02" title="a problem" kicker="I keep coming back to" />
 
       <div style={{ fontFamily: '"Caveat", cursive', fontSize: 30, color: COL.ink, lineHeight: 1.15, marginTop: 6 }}>
-        How do you tell someone <span style={{ color: COL.red }}>they're bad</span> at interviews,<br/>
-        in a way they actually <Marker color="#fff48a">believe</Marker>?
+        How do you explain a project you built <span style={{ color: COL.red }}>eight months ago</span>,<br/>
+        when someone is <Marker color="#fff48a">actually asking</Marker>?
       </div>
 
       <div style={{ marginTop: 22, fontFamily: '"Special Elite", monospace', fontSize: 15, color: COL.ink, lineHeight: 1.7, maxWidth: 460 }}>
-        Most mock-interview tools score you and move on. The score is fine —
-        nobody changes from a score. They change from <Marker>specific evidence,
-        played back at the moment they messed up</Marker>.
+        Students build real things in coursework and hackathons, then blank on
+        the details when it matters. The fix isn't a score. It's <Marker>your own
+        notes, written down while you still remember why</Marker>.
       </div>
 
       {/* Sketched system diagram */}
@@ -35,32 +35,32 @@ const ProblemSpread = () => (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 24px 1fr 24px 1fr', gap: 10, alignItems: 'center', textAlign: 'center', fontFamily: '"Patrick Hand", cursive', fontSize: 15, color: COL.ink }}>
           <div style={{ padding: '10px 6px', background: '#fff', border: `1.5px solid ${COL.ink}`, transform: 'rotate(-0.6deg)' }}>
             <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.red, lineHeight: 1 }}>1.</div>
-            user speaks<br/>(real-time)
+            write it down<br/>(stack, trade-offs)
           </div>
           <div style={{ fontFamily: '"Caveat", cursive', fontSize: 28, color: COL.red }}>→</div>
           <div style={{ padding: '10px 6px', background: '#fff', border: `1.5px solid ${COL.ink}`, transform: 'rotate(0.4deg)' }}>
             <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.red, lineHeight: 1 }}>2.</div>
-            whisper<br/>transcript
+            AI reads<br/>only your notes
           </div>
           <div style={{ fontFamily: '"Caveat", cursive', fontSize: 28, color: COL.red }}>→</div>
           <div style={{ padding: '10px 6px', background: '#fff48a', border: `1.5px solid ${COL.ink}`, transform: 'rotate(-0.5deg)' }}>
             <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.red, lineHeight: 1 }}>3.</div>
-            <Marker color="#fff48a">GPT-4 evaluator</Marker><br/>per-rubric
+            <Marker color="#fff48a">asks + scores</Marker><br/>5 criteria
           </div>
         </div>
 
         <div style={{ marginTop: 14, display: 'grid', gridTemplateColumns: '40px 1fr', gap: 8, alignItems: 'start' }}>
           <div style={{ fontFamily: '"Caveat", cursive', fontSize: 28, color: COL.red, lineHeight: 1 }}>↓</div>
           <div style={{ fontFamily: '"Patrick Hand", cursive', fontSize: 16, color: COL.ink, lineHeight: 1.4 }}>
-            replay <Marker color="#a8d4a8">timestamp-anchored feedback</Marker> over the
-            session video. you watch yourself fumble at <span style={{ fontFamily: 'monospace', background: '#fff', padding: '0 4px' }}>04:32</span> while it
-            highlights <span style={{ color: COL.red }}>"weak STAR structure — no Result"</span>.
+            then revise from <Marker color="#a8d4a8">your own words</Marker>. e.g.
+            <span style={{ fontFamily: 'monospace', background: '#fff', padding: '0 4px', margin: '0 4px' }}>chose X over Y</span>
+            <span style={{ color: COL.red }}>"because…"</span>, recorded while you still remember.
           </div>
         </div>
       </div>
 
       <Margin angle={-2} color={COL.red} style={{ marginTop: 16, fontSize: 18 }}>
-        ✱ score-as-feedback is a UX failure, not a model failure
+        ✱ the AI may only ask about what you documented. no notes, no question.
       </Margin>
     </PageL>
 
@@ -70,14 +70,14 @@ const ProblemSpread = () => (
         receipts · COPREPER · live
       </div>
       <h3 style={{ fontFamily: '"Caveat", cursive', fontSize: 'clamp(30px, 6vw, 38px)', lineHeight: 0.95, margin: 0, color: COL.ink }}>
-        what actually happened.
+        what's in it.
       </h3>
       <Underline w={300} color={COL.red} thick={2.8} style={{ marginLeft: 4, marginTop: -2 }} />
       <div style={{ marginTop: 14, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <a href="https://copreper.vercel.app" target="_blank" rel="noopener" className="nb-chip nb-chip-red">
           ↗ visit live
         </a>
-        <a href="https://github.com/Vipul-Ydv/copreper" target="_blank" rel="noopener" className="nb-chip">
+        <a href="https://github.com/Vipul-Ydv/COPREPER" target="_blank" rel="noopener" className="nb-chip">
           ⌥ view code
         </a>
       </div>
@@ -97,16 +97,16 @@ const ProblemSpread = () => (
         </div>
         <img src="notebook/assets/copreper.webp" alt="COPREPER screenshot" width={900} height={502} loading="lazy" decoding="async" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }} />
         <div style={{ marginTop: 6, fontFamily: '"Caveat", cursive', fontSize: 17, color: COL.pencil, textAlign: 'center', lineHeight: 1 }}>
-          session replay — feedback overlay
+          the landing page
         </div>
       </div>
 
       {/* Stats grid */}
       <div style={{ marginTop: 26, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
         {[
-          { n: '50+',   l: 'real sessions' },
-          { n: '1.4s',  l: 'avg latency' },
-          { n: '5',     l: 'rubric dims' },
+          { n: '5',  l: 'scoring criteria' },
+          { n: '3',  l: 'tier architecture' },
+          { n: '2',  l: 'AI providers, one adapter' },
         ].map((s, i) => (
           <div key={i} className="nb-a nb-drop" style={{
             background: '#fffcf2', border: `1.5px solid ${COL.ink}25`,
@@ -123,17 +123,17 @@ const ProblemSpread = () => (
       {/* What surprised me */}
       <div style={{ marginTop: 24, paddingTop: 16, borderTop: `1.5px dashed ${COL.pencil}50` }}>
         <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.ink, marginBottom: 8 }}>
-          what surprised me <span style={{ color: COL.red }}>:</span>
+          what I decided <span style={{ color: COL.red }}>:</span>
         </div>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontFamily: '"Patrick Hand", cursive', fontSize: 17, color: COL.ink, lineHeight: 1.6 }}>
           <li style={{ marginBottom: 6 }}>
-            <span style={{ color: COL.red }}>→</span> users replayed sessions <Marker>3.4× on average</Marker>. score alone got 1.1×.
+            <span style={{ color: COL.red }}>→</span> the AI is <Marker>grounded in your notes</Marker>. nothing documented, nothing asked.
           </li>
           <li style={{ marginBottom: 6 }}>
-            <span style={{ color: COL.red }}>→</span> the rubric dimensions matter more than the model.
+            <span style={{ color: COL.red }}>→</span> one adapter, two providers: swapping OpenAI for Claude is an env var.
           </li>
           <li>
-            <span style={{ color: COL.red }}>→</span> people don't want a number. they want to <span style={{ color: COL.blue }}>watch themselves</span>.
+            <span style={{ color: COL.red }}>→</span> SQLite first, <span style={{ color: COL.blue }}>PostgreSQL later</span> if it's ever needed.
           </li>
         </ul>
       </div>

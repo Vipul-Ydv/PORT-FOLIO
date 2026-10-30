@@ -64,7 +64,8 @@ const ProofSpread = ({ focus, setFocus }) => {
                 <div style={{
                   height: 130, background: p.polaroid, overflow: 'hidden',
                 }}>
-                  {p.img && <img src={p.img} alt={p.title} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {p.img ? <img src={p.img} alt={p.title} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : p.sketch && <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 10, fontFamily: '"Caveat", cursive', fontSize: 19, color: COL.pencil, lineHeight: 1.25 }}>{p.sketch}</div>}
                 </div>
                 <div style={{ marginTop: 8, fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.ink, lineHeight: 1 }}>
                   {p.title}

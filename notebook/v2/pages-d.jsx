@@ -14,7 +14,8 @@ const WhatNextSpread = ({ onHiren }) => (
       <Underline w={260} color={COL.red} thick={3} />
 
       <p style={{ fontFamily: '"Special Elite", monospace', fontSize: 16, color: COL.ink, lineHeight: 1.75, marginTop: 22, maxWidth: 460 }}>
-        Currently a Software Engineer intern at <Marker>BizBhai</Marker>.
+        Graduating in 2027 and <Marker>open to SDE and full-stack roles</Marker>.
+        Currently a Software Engineer intern at BizBhai.
         Strong on full-stack + applied AI, and always happy to talk shop,
         side projects or collabs. I read DMs and I reply within a day.
       </p>

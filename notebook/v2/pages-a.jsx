@@ -82,7 +82,7 @@ const CoverSpread = ({ onJump, onHiren }) => (
 
       {/* Stamps */}
       <div className="nb-a nb-drop" style={{ position: 'absolute', bottom: 80, left: 60, display: 'flex', gap: 18, '--d': '.6s' }}>
-        <StickyTag color="#a8d4a8" angle={-3} style={{ fontSize: 18 }}>● now · SE intern @ BizBhai</StickyTag>
+        <StickyTag color="#a8d4a8" angle={-3} style={{ fontSize: 18 }}>● 2027 grad · open to SDE roles</StickyTag>
         <Margin angle={-4} color={COL.red} style={{ fontSize: 22 }}>← talk to me!</Margin>
       </div>
     </PageL>
