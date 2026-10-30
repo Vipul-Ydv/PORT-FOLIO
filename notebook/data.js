@@ -78,6 +78,7 @@ window.ndata = {
       ],
       metric: "1st place · TechFest 2026",
       live: "https://hack-n-win-3-0-theta.vercel.app",
+      repo: "https://github.com/Vipul-Ydv/NISHAAN",
     },
     {
       slug: "copreper", title: "COPREPER",
