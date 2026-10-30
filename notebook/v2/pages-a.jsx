@@ -61,7 +61,22 @@ const CoverSpread = ({ onJump, onHiren }) => (
         Vipul Yadav<span style={{ color: COL.red }}>.</span>
       </div>
 
-      <div style={{ marginTop: 60, position: 'relative' }}>
+      <div style={{ marginTop: 10, fontFamily: '"Special Elite", monospace', fontSize: 14, color: COL.ink, lineHeight: 1.55, maxWidth: 420 }}>
+        Full-stack + AI engineer · CSE 2027 · <Marker>open to SDE roles</Marker>
+      </div>
+      <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button onClick={() => onJump('proof')} className="nb-btn nb-btn-primary" style={{ fontSize: 18, padding: '4px 12px', whiteSpace: 'nowrap' }}>
+          see projects ↓
+        </button>
+        <a href="vipul_res.pdf" target="_blank" rel="noopener" className="nb-btn" style={{ fontSize: 18, padding: '4px 12px', whiteSpace: 'nowrap' }}>
+          resume
+        </a>
+        <a href="mailto:vipul.ydv01@gmail.com" className="nb-btn" style={{ fontSize: 18, padding: '4px 12px', whiteSpace: 'nowrap' }}>
+          email
+        </a>
+      </div>
+
+      <div style={{ marginTop: 40, position: 'relative' }}>
         <div style={{ fontFamily: '"Caveat", cursive', fontSize: 22, color: COL.pencil, marginBottom: 6, transform: 'rotate(-1deg)' }}>
           notebook nº 03 ✱ '24 — '26
         </div>

@@ -224,6 +224,15 @@
      column: on a phone the right-hand page (contents, blog, contact card)
      was rendered entirely off-screen. */
   .nb-topbar-inner { flex-wrap: wrap; row-gap: 8px; }
+  .nb-topbar-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  @media (max-width: 900px) { .nb-topbar-actions { margin-left: auto; } .nb-kbd { display: none; } }
+  @media (max-width: 480px) { .nb-topbar-brand-by { display: none; } }
+  @media (min-width: 901px) {
+    .nb-topbar-inner { flex-wrap: nowrap; }
+    .nb-topbar-nav { min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    .nb-topbar-nav::-webkit-scrollbar { display: none; }
+  }
+  @media (max-width: 1150px) { .nb-kbd { display: none; } }
 
   @media (max-width: 900px) {
     .nb-topbar-inner { padding: 0 16px; gap: 12px; }
