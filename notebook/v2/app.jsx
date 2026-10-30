@@ -82,7 +82,7 @@ const NotebookV2App = () => {
       <div className="nb-topbar">
         <div className="nb-topbar-inner">
           <span style={{ fontFamily: '"Caveat", cursive', fontSize: 24, color: COL.ink }}>
-            Field Notes<span style={{ color: COL.red }}>.</span> <span style={{ fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil, marginLeft: 6, letterSpacing: '0.1em' }}>by V.YDV</span>
+            Field Notes<span style={{ color: COL.red }}>.</span> <span className="nb-topbar-brand-by" style={{ fontFamily: '"Special Elite", monospace', fontSize: 11, color: COL.pencil, marginLeft: 6, letterSpacing: '0.1em' }}>by V.YDV</span>
           </span>
           <nav className="nb-topbar-nav" style={{ display: 'flex', gap: 14, flex: 1, justifyContent: 'center' }}>
             {NAV.map(n => (
@@ -91,10 +91,13 @@ const NotebookV2App = () => {
               </button>
             ))}
           </nav>
-          <button onClick={() => setHirenOpen(true)} className="nb-btn nb-btn-small">
+          <div className="nb-topbar-actions">
+          <a href="vipul_res.pdf" target="_blank" rel="noopener" className="nb-btn nb-btn-small" style={{ whiteSpace: 'nowrap' }}>resume ↓</a>
+          <button onClick={() => setHirenOpen(true)} className="nb-btn nb-btn-small" style={{ whiteSpace: 'nowrap' }}>
             ✎ ask HIREN
-            <span style={{ marginLeft: 8, padding: '0 5px', border: `1.5px solid ${COL.ink}50`, fontSize: 12, fontFamily: '"Special Elite", monospace' }}>⌘K</span>
+            <span className="nb-kbd" style={{ marginLeft: 8, padding: '0 5px', border: `1.5px solid ${COL.ink}50`, fontSize: 12, fontFamily: '"Special Elite", monospace' }}>⌘K</span>
           </button>
+          </div>
         </div>
       </div>
 
